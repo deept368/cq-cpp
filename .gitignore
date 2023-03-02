@@ -1,0 +1,3 @@
+/model/*.proto
+/model/*.bin
+/libtorch
