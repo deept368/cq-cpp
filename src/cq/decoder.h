@@ -6,7 +6,10 @@
 #include <vector>
 
 namespace lh{
-
+    /*
+    Fetches and decodes codes for all the documents and generate approx embeddings for these documents.
+    It used codebook and static embeddings to achieve the same.
+    */
     class Decoder{
         public:
             explicit Decoder();

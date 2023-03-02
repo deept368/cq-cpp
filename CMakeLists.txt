@@ -39,7 +39,7 @@ include_directories(${utf8proc_INCLUDE_DIR} ${MKL_INCLUDES})
 
 add_library(bertcpp SHARED ${DIR_SRCS})
 
-set(CMAKE_PREFIX_PATH /home/deept/cq-cpp/libtorch)
+set(CMAKE_PREFIX_PATH ./libtorch)
 find_package(Torch REQUIRED)
 set(CMAKE_PREFIX_PATH "")
 target_link_libraries(bertcpp ${TORCH_LIBRARIES} ${PROTOBUF_LIBRARY} ${MKL_LIBRARY} ${utf8proc_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})

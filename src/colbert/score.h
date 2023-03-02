@@ -2,7 +2,9 @@
 #include "../config.h"
 
 namespace lh{
-
+    /**
+     Computes score of all documents for a given query and top K documents.
+    */
     class Score{
         public:
             explicit Score();

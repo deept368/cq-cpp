@@ -7,6 +7,9 @@
 
 namespace lh{
 
+    /**
+     Does all the necessary preprocessing on input strings and computes the BERT embeddings of strings.  
+    */
     template<class T>
     class BertCompute{
 

@@ -83,11 +83,20 @@ namespace lh{
         
     }    
 
+    /**
+     Computes the BERT embedding of given input strings. Treats query and document differently. Currently support is ony added 
+     for queries as this is only required for CQ.
+     @param input_string the input strings to encode
+     @param isQuery whether the input strings are queries or documents
+     @return linear a vector containing the BERT embeddings of the input strings of size (BATCH_SIZE * QUERY_MAXLEN * HIDDEN_DIM_SIZE(768)) 
+    */
     template<class T>
     std::vector<T> BertCompute<T>::compute(std::vector<std::string> input_string, bool isQuery){
         
+        //computing the batch size
         int curr_batch_size = input_string.size();
 
+        //necessary tokens are added and the input strings are converted to tokens
         std::vector<std::vector<std::string>> input_tokens(2);
         for (std::size_t i = 0; i < curr_batch_size; i++){
             tokenizer_->tokenize(input_string[i].c_str(), &input_tokens[i], query_maxlen);
@@ -98,6 +107,7 @@ namespace lh{
             input_tokens[i].push_back("[SEP]");
         }
 
+        //mask is computed and padding is applied to input strings
         uint64_t mask[curr_batch_size];
         for (std::size_t i = 0; i < curr_batch_size; i++){
             mask[i] = input_tokens[i].size();
@@ -106,6 +116,7 @@ namespace lh{
             }
         }
 
+        //token ids are computed using tokens. vocab.txt is used for the same.
         uint64_t input_ids[curr_batch_size * query_maxlen];
         uint64_t position_ids[curr_batch_size * query_maxlen];
         uint64_t type_ids[curr_batch_size * query_maxlen];
@@ -117,27 +128,13 @@ namespace lh{
             }
         }
         
-        // //to remove
-        // for(int i=0; i<curr_batch_size * query_maxlen; i++){
-        //     std::cout<<"ids "<<i<<" "<<input_ids[i]<<std::endl;
-        // }
-
-        
+        //bert compute is called to generate the embeddings. output is stored in 1-d array seq_output, size: batch_size*query_maxlen*768(hidden_dim)
         std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
         T pool_output_[curr_batch_size * hidden_size_];  
         T seq_output_[size];    
         bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
-
-        // std::cout<<"size "<<size<<std::endl;
-
-        // for(int i=size-1; i>=size-10; i--){
-        //     std::cout<<"outs "<<seq_output_[i]<<std::endl;
-        // }
-        // std::cout<<std::endl;
-        //  for(int i=0; i<10; i++){
-        //     std::cout<<"outs "<<seq_output_[i]<<std::endl;
-        // }
         
+        //array output is converted to vector before returning 
         return convert_to_vector(seq_output_, size);
 
     }

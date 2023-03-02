@@ -21,10 +21,19 @@ namespace lh{
         
     }    
 
+    /**
+
+    Encodes the input strings using the specified BERT model and linear layer weights, and returns a tensor containing the encoded query vectors.
+    The method first computes the BERT embeddings for the input strings using the specified BERT model, and then applies a linear layer
+    ith the specified weights to the BERT embeddings to obtain the encoded query vectors. The resulting vectors are then normalized using L2 normalization.
+    @param input_strings A vector of input strings to encode
+    @return A tensor containing the encoded query vectors of size BATCH_SIZE * query_maxlen(32) * EMBEDDING_DIM(128)
+    */
 
     template<class T>
     torch::Tensor QueryEncoder<T>::encode(std::vector<std::string> input_strings){
         
+        //bert embeddings are computed for all the query strings and converted to tensor
         std::size_t batch_size = input_strings.size();
         std::vector<T> vec_bert_output= bert_compute_->compute(input_strings, true);
         
@@ -32,6 +41,7 @@ namespace lh{
         auto bert_output_tensor = torch::from_blob(vec_bert_output.data(),
                                   {1, int(vec_bert_output.size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
  
+        //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
         std::vector<T> weight_vec = get_vec_from_file("../model/colbert_linear_layer_weights.txt");
         auto linear_weight_tensor = torch::from_blob(weight_vec.data(),
                                   {1, int(weight_vec.size())}, options).view({(std::int64_t)dimension_size_, (std::int64_t)hidden_size_});
@@ -39,6 +49,8 @@ namespace lh{
         linear_model_->weight = linear_weight_tensor;
         auto linear_output = linear_model_->forward(bert_output_tensor);
 
+
+        //finally, linear_ouptut is normalised and returned
         auto normalised_output = torch::nn::functional::normalize(linear_output,
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
         return normalised_output;

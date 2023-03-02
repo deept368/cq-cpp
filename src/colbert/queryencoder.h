@@ -4,6 +4,9 @@
 
 namespace lh{
 
+    /**
+     Encodes the query using the BERT model and returns embeddings for all the query input strings.
+    */
     template<class T>
     class QueryEncoder{
 
