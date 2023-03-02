@@ -11,9 +11,11 @@ using namespace lh;
 
 int main()
 {   
-    string input_string = {"acura integra timing belt replacement cost"};
+    string input_string_1 = {"acura integra timing belt replacement cost"};
+    string input_string_2 = {"hey how are you"};
     std::vector<std::string> is;
-    is.push_back(input_string);
+    is.push_back(input_string_1);
+     is.push_back(input_string_2);
     
     ExecuteCQ cq;
     cq.execute(is);

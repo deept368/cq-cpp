@@ -31,20 +31,21 @@ namespace lh{
     */
     void ExecuteCQ::execute(vector<string> input_strings){
         //query input_strings are encoded
-        auto Q = query_encoder_->encode(input_strings);
-      
+        auto Q_all = query_encoder_->encode(input_strings);
+        cout<<Q_all.sizes()<<endl;
         map<string, torch::Tensor> query_score_tensor_map;
 
         //approx document embeddings are retrieved for topK documents for each query
         map<string, torch::Tensor> query_doc_emb_approx_map = decoder_->decode();
         //for each query, score is computed in a sequential manner
-        for(auto& input: input_strings){
-            auto D = query_doc_emb_approx_map[input];
-            auto score = score_->compute_scores(Q, D); 
+        for(std::size_t idx=0; idx<input_strings.size(); idx++){
+            auto D = query_doc_emb_approx_map[input_strings[idx]];
+            auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
             cout<<score.sizes()<<endl;
             cout<<score[0]<<" "<<score[1]<<endl;
-            query_score_tensor_map.insert(make_pair(input, score));
+            query_score_tensor_map.insert(make_pair(input_strings[idx], score));
         }
+        cout<<query_score_tensor_map<<endl;
     }
 }
    
