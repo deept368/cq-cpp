@@ -41,4 +41,4 @@ make -j4
 The **main()** function resides in *bert-sample.cpp* file. All the necessary documentation fo various functions is included in the code.
 
 ## Thanks
-**BERTCPP** model is taken from here **[BERTCPP]**(https://github.com/LeeJuly30/BERTCpp) 
+**BERTCPP** model is taken from here [BERTCPP](https://github.com/LeeJuly30/BERTCpp) 
