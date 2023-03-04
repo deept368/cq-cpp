@@ -10,8 +10,9 @@ option(PROFILE_ENABLE "Enable profile" ON)
 file(GLOB DIR_SRCS src/bert/*.cc src/colbert/*.cc src/cq/*.cc)
 
 
-
-    # add_definitions(-DPRFILE_FUNCTION)
+if(PROFILE_ENABLE)
+      #add_definitions(-DPRFILE_FUNCTION)
+      add_definitions(-DPRFILE_CQ)
     #  message("build profile binary")
      # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
     #  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
@@ -19,7 +20,7 @@ file(GLOB DIR_SRCS src/bert/*.cc src/colbert/*.cc src/cq/*.cc)
     #  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -g")
     #  SET(CMAKE_CXX_FLAGS_RELEASE "-O0")
     #  SET(CMAKE_CXX_FLAGS_DEBUG "-O0")
-
+endif(PROFILE_ENABLE)
 
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)

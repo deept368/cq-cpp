@@ -1,5 +1,6 @@
 #include "decoder.h"
 
+#include <torch/script.h>
 #include<iostream>
 
 using namespace std;
@@ -31,33 +32,48 @@ namespace lh{
 
      map<string, torch::Tensor> Decoder::decode(){
 
-        //static embedding is fetched for all the vocabulary into to linear vec. size (30522(vocab_size) * 128(embedding_dim))
-        auto static_embs_vec = get_vec_from_file("../model/non_contextual_embeddings.txt");
+        #ifdef PRFILE_CQ
+            auto begin = std::chrono::system_clock::now();
+        #endif
         
-        //linear vec of static embeddings is converted to a 2-d tensor of size [vocab_size_(30522) * dimesnion_size_(128)] 
-        auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
-        auto static_embeddings = torch::from_blob(static_embs_vec.data(),
-                            {1, int(static_embs_vec.size())}, options).view({(std::int64_t)vocab_size_, (std::int64_t)dimension_size_});
-        
+        #ifdef PRFILE_CQ
+            auto begin_1 = std::chrono::system_clock::now();
+        #endif
+
+        //static embedding is fetched for all the vocabulary from a .pt file into a tensor [30522(vocab_size) * 128(embedding_dim)]
+        torch::Tensor static_embeddings;
+        torch::load(static_embeddings, "../model/non_contextual_embeddings.pt");
+
+         #ifdef PRFILE_CQ
+            auto end_1 = std::chrono::system_clock::now();
+            std::cout<<"static_embs loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_1-begin_1).count())/1000 << std::endl;
+        #endif
+
         //torch::nn::EmbeddingImpl(PyTorch C++) model is initialised and static_embeddings tensor is loaded as pretrained weight. 
         auto embedding_options = torch::nn::EmbeddingOptions(vocab_size_, dimension_size_).padding_idx(pad_token_id_)._weight(static_embeddings);
         auto non_contextual_embedding = new torch::nn::EmbeddingImpl(embedding_options);
        
-       //codebook is loaded as a linear vec and converted to 3-d tensor of size M * codebook_dim_(8) * K
-        auto codebook_vec = get_vec_from_file("../model/codebook.txt");
-        auto codebook = torch::from_blob(codebook_vec.data(),
-                            {1, int(codebook_vec.size())}, options).view({M_, codebook_dim_, K_});
-             
-        //composition layers weights are loaded as a linear vec and converted to a 2-d Tensor of [dim_size(128) * (2*dim_size)]
-        auto composition_weights_vec = get_vec_from_file("../model/composition_c_e_linear_weights.txt");
-        auto composition_weights = torch::from_blob(composition_weights_vec.data(),
-                            {1, int(composition_weights_vec.size())}, options).view({dimension_size_, 2*dimension_size_});
-        
-        //composition layers bias are loaded as a linear vec and converted to a 1-d Tensor of [dim_size(128)]
-        auto composition_bias_vec = get_vec_from_file("../model/composition_c_e_linear_bias.txt");
-        auto composition_bias = torch::from_blob(composition_bias_vec.data(),
-                            {1, int(composition_bias_vec.size())}, options).view({dimension_size_});
-        
+        #ifdef PRFILE_CQ
+            auto begin_2 = std::chrono::system_clock::now();
+        #endif
+
+       //codebook is loaded. size: [M * codebook_dim_(8) * K]
+        torch::Tensor codebook;
+        torch::load(codebook, "../model/codebook.pt");
+
+        #ifdef PRFILE_CQ
+            auto end_2 = std::chrono::system_clock::now();
+            std::cout<<"codebok loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_2-begin_2).count())/1000 << std::endl;
+        #endif
+
+        //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
+        torch::Tensor composition_weights;
+        torch::load(composition_weights, "../model/composition_c_e_linear_weights.pt");
+
+        //composition layer bias are loaded as a 1-d Tensor of [dim_size(128)]
+        torch::Tensor composition_bias;
+        torch::load(composition_bias, "../model/composition_c_e_linear_bias.pt");
+
         //torch::nn::LinearImpl(PyTorch C++) is used to initialise a linear compositon layers and weights and bias are set
         auto composition_layer = new torch::nn::LinearImpl(torch::nn::LinearOptions(2*dimension_size_, dimension_size_).bias(true));
         composition_layer->weight = composition_weights;
@@ -69,6 +85,10 @@ namespace lh{
         */
         map<string, map<string, vector<vector<int>>>> fetched_codes = code_fetcher_->fetch_codes();
         map<string, torch::Tensor> query_doc_approx_emb_map;
+
+         #ifdef PRFILE_CQ
+            auto begin_3 = std::chrono::system_clock::now();
+        #endif
 
         //we loop over each query string
         for (auto&  query_doc_pairs : fetched_codes) {
@@ -119,6 +139,17 @@ namespace lh{
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
             query_doc_approx_emb_map.insert(make_pair(query_doc_pairs.first, doc_emb_approx));      
         }
+
+        #ifdef PRFILE_CQ
+            auto end_3 = std::chrono::system_clock::now();
+            std::cout<<"just decoding computation time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_3-begin_3).count())/1000 << std::endl;
+        #endif
+
+        #ifdef PRFILE_CQ
+            auto end = std::chrono::system_clock::now();
+            std::cout<<"total document decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
+        #endif
+
         return query_doc_approx_emb_map;
     }
 }

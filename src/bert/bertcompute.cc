@@ -93,6 +93,9 @@ namespace lh{
     template<class T>
     std::vector<T> BertCompute<T>::compute(std::vector<std::string> input_string, bool isQuery){
         
+        #ifdef PRFILE_CQ
+            auto begin = std::chrono::system_clock::now();
+        #endif
         //computing the batch size
         int curr_batch_size = input_string.size();
 
@@ -134,8 +137,15 @@ namespace lh{
         T seq_output_[size];    
         bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
         
+
+        #ifdef PRFILE_CQ
+            auto end = std::chrono::system_clock::now();
+            std::cout<<"bert compute time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
+        #endif
+
         //array output is converted to vector before returning 
         return convert_to_vector(seq_output_, size);
+        
 
     }
     template class BertCompute<float>;

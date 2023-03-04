@@ -25,9 +25,12 @@ namespace lh{
         internal_map.insert(make_pair("doc1", doc1_vec));
 
         result.insert(make_pair("acura integra timing belt replacement cost", internal_map));
-        result.insert(make_pair("hey how are you", internal_map));
+       
         return result;
     }
+
+
+    
 
 }
    

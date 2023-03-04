@@ -1,6 +1,7 @@
 #include "queryencoder.h"
 #include <torch/torch.h>
 #include <iostream>
+#include <chrono>
 #include "../utils.h"
 
 using namespace std;
@@ -33,6 +34,10 @@ namespace lh{
     template<class T>
     torch::Tensor QueryEncoder<T>::encode(std::vector<std::string> input_strings){
         
+         #ifdef PRFILE_CQ
+            auto begin = std::chrono::system_clock::now();
+        #endif
+
         //bert embeddings are computed for all the query strings and converted to tensor
         std::size_t batch_size = input_strings.size();
         std::vector<T> vec_bert_output= bert_compute_->compute(input_strings, true);
@@ -42,17 +47,20 @@ namespace lh{
                                   {1, int(vec_bert_output.size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
  
         //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
-        std::vector<T> weight_vec = get_vec_from_file("../model/colbert_linear_layer_weights.txt");
-        auto linear_weight_tensor = torch::from_blob(weight_vec.data(),
-                                  {1, int(weight_vec.size())}, options).view({(std::int64_t)dimension_size_, (std::int64_t)hidden_size_});
+        torch::Tensor linear_layer_weight_tensor;
+        torch::load(linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
         auto linear_model_ = new torch::nn::LinearImpl(torch::nn::LinearOptions(hidden_size_, dimension_size_).bias(false));
-        linear_model_->weight = linear_weight_tensor;
+        linear_model_->weight = linear_layer_weight_tensor;
         auto linear_output = linear_model_->forward(bert_output_tensor);
-
 
         //finally, linear_ouptut is normalised and returned
         auto normalised_output = torch::nn::functional::normalize(linear_output,
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
+         #ifdef PRFILE_CQ
+            auto end = std::chrono::system_clock::now();
+            std::cout<<"query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
+        #endif
+        
         return normalised_output;
     }
     

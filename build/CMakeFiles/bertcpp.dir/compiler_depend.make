@@ -26955,7 +26955,29 @@ CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o: /home/deept/cq-cpp/src/cq/decoder.cc
   /home/deept/cq-cpp/src/config.h \
   /home/deept/cq-cpp/src/utils.h \
   /home/deept/cq-cpp/src/config.h \
-  /home/deept/cq-cpp/src/cq/codefetcher.h
+  /home/deept/cq-cpp/src/cq/codefetcher.h \
+  /home/deept/cq-cpp/libtorch/include/torch/script.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/autograd/InferenceMode.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/runtime/custom_operator.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/import.h \
+  /home/deept/cq-cpp/libtorch/include/caffe2/serialize/inline_container.h \
+  /home/deept/cq-cpp/libtorch/include/caffe2/serialize/istream_adapter.h \
+  /home/deept/cq-cpp/libtorch/include/caffe2/serialize/read_adapter_interface.h \
+  /home/deept/cq-cpp/libtorch/include/caffe2/serialize/versions.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/unpickler.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/script_type_parser.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/resolver.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/sugared_value.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/error_report.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/tree.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/lexer.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/parser_constants.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/strtod.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/schema_matching.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/versioned_symbols.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/tree_views.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/pickler.h \
+  /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/pickle.h
 
 CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute_cq.cc \
   /usr/include/stdc-predef.h \
@@ -31815,6 +31837,22 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/src/cq/execute_cq.cc:
 
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/sugared_value.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/script_type_parser.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/unpickler.h:
+
+/home/deept/cq-cpp/libtorch/include/caffe2/serialize/versions.h:
+
+/home/deept/cq-cpp/libtorch/include/caffe2/serialize/read_adapter_interface.h:
+
+/home/deept/cq-cpp/libtorch/include/caffe2/serialize/inline_container.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/import.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/runtime/custom_operator.h:
+
 /home/deept/cq-cpp/src/cq/decoder.h:
 
 /home/deept/cq-cpp/src/cq/decoder.cc:
@@ -32163,6 +32201,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/tensor_split_native.h:
 
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/versioned_symbols.h:
+
 /home/deept/cq-cpp/libtorch/include/ATen/ops/tanh_backward_meta.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/tanh_backward_native.h:
@@ -32294,6 +32334,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/softshrink_backward_meta.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/softshrink_meta.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/autograd/InferenceMode.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/softplus_backward_meta.h:
 
@@ -32450,6 +32492,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/qscheme_native.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/qr_native.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/pickler.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/q_per_channel_axis_native.h:
 
@@ -33130,6 +33174,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/chain_matmul_native.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/ceil_meta.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/error_report.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/cauchy_native.h:
 
@@ -33888,6 +33934,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/upsample_bicubic2d_backward.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/upsample_bicubic2d_ops.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/tree.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/unsqueeze_copy_ops.h:
 
@@ -35627,9 +35675,13 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/logsumexp_ops.h:
 
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/tree_views.h:
+
 /home/deept/cq-cpp/libtorch/include/ATen/ops/elu_native.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/parser_constants.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/logical_not_ops.h:
 
@@ -36583,6 +36635,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/detach_ops.h:
 
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/schema_matching.h:
+
 /home/deept/cq-cpp/src/bert/quantization.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_convolution_mode_ops.h:
@@ -36762,6 +36816,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/core/dynamic_type.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_fake_quantize_learnable_per_channel_affine_backward.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/resolver.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/Functions.h:
 
@@ -39019,6 +39075,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_cdist_backward_ops.h:
 
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/strtod.h:
+
 /home/deept/cq-cpp/libtorch/include/ATen/ops/reflection_pad1d_ops.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_cdist_forward.h:
@@ -39072,6 +39130,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_foreach_tanh_ops.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_copy_from_and_resize_ops.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/script.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_ctc_loss_backward.h:
 
@@ -39971,6 +40031,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/embedding_bag.h:
 
+/home/deept/cq-cpp/libtorch/include/caffe2/serialize/istream_adapter.h:
+
 /home/deept/cq-cpp/libtorch/include/torch/csrc/api/include/torch/data/worker_exception.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_sparse_bsr_tensor_unsafe.h:
@@ -40632,6 +40694,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/linalg_lu_factor.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/celu.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/frontend/lexer.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_native_multi_head_attention_ops.h:
 
@@ -41488,6 +41552,8 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
 /home/deept/cq-cpp/libtorch/include/ATen/ops/gru_ops.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/ldexp.h:
+
+/home/deept/cq-cpp/libtorch/include/torch/csrc/jit/serialization/pickle.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/_foreach_log_ops.h:
 
