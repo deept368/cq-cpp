@@ -5,7 +5,7 @@ Implementation of Paper [Compact Token Representations with Contextual Quantizat
 
 
 ## Models
-All the pretrained models are kept in **/model** folder. We are primarily using **.txt** files and loading them as models in the code. For **BERT**, we are using **model.proto** as pretrained weights. Along with this *vocabulary* and *codebook* files are also present in the **/model** folder.
+All the pretrained models are kept in **/model** folder. We are primarily using **.pt** files and loading them as models in the code. For **BERT**, we are using **model.proto** as pretrained weights. Along with this *vocabulary* and *codebook* files are also present in the **/model** folder.
 
 ## Dependencies
 
