@@ -15,18 +15,24 @@ namespace lh{
     class QueryProcessor
     {
     private:
-        unordered_map<int, string> queryMapping;
-        unordered_map<int, vector<string>> queryResults;
+        unordered_map<std::size_t, string> queryMapping;
+        unordered_map<string, std::size_t> queryIdMapping;
+        unordered_map<std::size_t, vector<string>> queryResults;
         static CodeFetcher* code_fetcher;
-    public:
-        QueryProcessor(string queryFile, string resultFile);
-        ~QueryProcessor();
+
         void readQueryMapping(string queryFile);
         void readQueryResults(string resultFile);
-        string getQuery(int queryId);
-        vector<string> getQueryResults(int queryId);
-        unordered_map<int, unordered_map<string, vector<vector<int>>>> getCodes();
+        vector<string> getQueryResults(std::size_t queryId);
         static CodeFetcher* get_code_fetcher();
+    
+    public:
+        QueryProcessor();
+        ~QueryProcessor();
+        unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> getCodes();
+        string getQuery(std::size_t queryId);
+        size_t getQueryId(string queryId);
+        void print_doc_data(unordered_map<string, vector<vector<std::size_t>>> doc_data_map);
+       
     };
 }
 

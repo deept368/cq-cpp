@@ -21,18 +21,18 @@ namespace lh{
             vector<ifstream *> file_ptrs;
             unordered_map<string, int> key_offset_store;
 
-        public:
-            // Constructor
-            CodeFetcher(string filename, uint32_t number_of_files);
-            ~CodeFetcher();
             void load_metadata();
             void initialize_file_ptrs();
             bool read_file(int file_num);
             void initialize_key_offset_store();
-            string get_hex(uint32_t num);
-            string compute_hash(string doc_id);
-            unordered_map<string, vector<vector<int>>> get_codes(vector<string> document_ids);
-            void print_doc_data(unordered_map<string, vector<vector<int>>> doc_data_map);
+
+            
+
+        public:
+            // Constructor
+            CodeFetcher(string filename, uint32_t number_of_files);
+            ~CodeFetcher();
+            unordered_map<string, vector<vector<std::size_t>>> get_codes(vector<string> document_ids);
     };
 }
 
