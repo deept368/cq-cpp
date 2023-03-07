@@ -16,7 +16,7 @@ namespace lh{
         public:
             explicit ExecuteCQ();
             ~ExecuteCQ();
-            void execute(vector<string> input_strings);
+            void execute();
             
         private:
             Decoder* decoder_;

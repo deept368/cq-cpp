@@ -39,6 +39,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o.d"
   "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o"
   "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o.d"
+  "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o"
+  "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o.d"
   "libbertcpp.pdb"
   "libbertcpp.so"
 )

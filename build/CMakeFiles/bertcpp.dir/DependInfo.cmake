@@ -28,6 +28,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/deept/cq-cpp/src/cq/codefetcher.cc" "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o.d"
   "/home/deept/cq-cpp/src/cq/decoder.cc" "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o.d"
   "/home/deept/cq-cpp/src/cq/execute_cq.cc" "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o.d"
+  "/home/deept/cq-cpp/src/cq/queryprocessor.cc" "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o.d"
   )
 
 # Targets to which this target links.

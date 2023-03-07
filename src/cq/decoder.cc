@@ -86,6 +86,8 @@ namespace lh{
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
         unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> fetched_codes = query_processor_->getCodes();
+        cout<<"fetched "<<endl;
+        printMap(fetched_codes);
         map<std::size_t, torch::Tensor> query_doc_approx_emb_map;
 
          #ifdef PRFILE_CQ
@@ -105,6 +107,8 @@ namespace lh{
                     tokens.push_back(token_vec.front());
                     token_vec.erase(token_vec.begin());   
                 }
+
+                
                 
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
                 auto token_tensor = torch::from_blob(tokens.data(), {(std::int64_t)tokens.size()}, torch::kInt);
