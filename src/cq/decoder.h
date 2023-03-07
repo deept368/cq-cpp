@@ -1,7 +1,7 @@
 #include <torch/torch.h>
 #include "../config.h"
 #include "../utils.h"
-#include "codefetcher.h"
+#include "queryprocessor.h"
 #include <map>
 #include <vector>
 
@@ -14,10 +14,10 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<string, torch::Tensor> decode();
+            map<std::size_t, torch::Tensor> decode();
             
         private:
-            CodeFetcher* code_fetcher_;
+            QueryProcessor* query_processor_;
             std::int64_t vocab_size_;
             std::int64_t dimension_size_;
             std::int64_t pad_token_id_;

@@ -2,6 +2,13 @@
 #include <vector>
 #include <torch/torch.h>
 #include "config.h"
+#include <cstdint>
+#include <arpa/inet.h>
+#include <boost/uuid/detail/md5.hpp>
+#include <boost/algorithm/hex.hpp>
+#include <bitset>
+#include <sstream>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -90,6 +97,27 @@ namespace lh {
             vec.push_back(innerVec);
         }
         return vec;
+    }
+
+    inline string get_hex(uint32_t num){
+        bitset<32> bits(num); // convert to binary string of length 32
+        stringstream ss;
+        ss << hex << uppercase << bits.to_ulong(); // convert binary string to hex string
+        string hex_string = ss.str();
+        return hex_string;
+    }
+
+    inline string compute_hash(string doc_id){
+        boost::uuids::detail::md5 hash;
+        boost::uuids::detail::md5::digest_type digest;
+        hash.process_bytes(doc_id.data(), doc_id.size());
+        hash.get_digest(digest);
+
+        // Convert the first 4 bytes to a string in hexadecimal format
+        string hex_hash;
+        boost::algorithm::hex(digest, digest + 1, back_inserter(hex_hash));
+
+        return hex_hash;
     }
    
 

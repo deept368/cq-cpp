@@ -1,14 +1,16 @@
 #include "decoder.h"
+#include "queryprocessor.h"
 
 #include <torch/script.h>
 #include<iostream>
+#include<unordered_map>
 
 using namespace std;
 
 namespace lh{
     
     Decoder::Decoder(){
-        code_fetcher_ = new CodeFetcher();
+        query_processor_ = new QueryProcessor();
         vocab_size_ = VOCAB_SIZE;
         dimension_size_ = DIMENSION_SIZE;
         pad_token_id_ = PAD_TOKEN_ID; 
@@ -20,7 +22,7 @@ namespace lh{
 
   
     Decoder::~Decoder(){
-        delete code_fetcher_;
+        delete query_processor_;
     }    
     
     /**
@@ -30,7 +32,7 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<string, torch::Tensor> Decoder::decode(){
+     map<std::size_t, torch::Tensor> Decoder::decode(){
 
         #ifdef PRFILE_CQ
             auto begin = std::chrono::system_clock::now();
@@ -83,8 +85,8 @@ namespace lh{
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
-        map<string, map<string, vector<vector<int>>>> fetched_codes = code_fetcher_->fetch_codes();
-        map<string, torch::Tensor> query_doc_approx_emb_map;
+        unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> fetched_codes = query_processor_->getCodes();
+        map<std::size_t, torch::Tensor> query_doc_approx_emb_map;
 
          #ifdef PRFILE_CQ
             auto begin_3 = std::chrono::system_clock::now();
@@ -92,12 +94,12 @@ namespace lh{
 
         //we loop over each query string
         for (auto&  query_doc_pairs : fetched_codes) {
-            map<string, vector<vector<int>>>& document_to_codes_map = query_doc_pairs.second;
+            unordered_map<string, vector<vector<std::size_t>>>& document_to_codes_map = query_doc_pairs.second;
             std::vector<torch::Tensor> approx_tensors;
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : document_to_codes_map) {
-                vector<vector<int>>& codes_vec = doc_codes_pairs.second;
-                vector<int> tokens;
+                vector<vector<std::size_t>>& codes_vec = doc_codes_pairs.second;
+                vector<std::size_t> tokens;
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
                 for(auto& token_vec: codes_vec){
                     tokens.push_back(token_vec.front());

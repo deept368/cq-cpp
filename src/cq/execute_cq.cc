@@ -1,4 +1,5 @@
 #include "execute_cq.h"
+#include "queryprocessor.h"
 
 #include<chrono>
 #include<iostream>
@@ -11,6 +12,7 @@ namespace lh{
        decoder_ = new Decoder();
        query_encoder_ = new QueryEncoder<float>();
        score_ = new Score();
+       query_processor_ = new QueryProcessor();
     }
 
   
@@ -18,6 +20,7 @@ namespace lh{
        delete decoder_;
        delete query_encoder_;
        delete score_;
+       delete query_processor_;
     }    
 
     /**
@@ -40,10 +43,10 @@ namespace lh{
         map<string, torch::Tensor> query_score_tensor_map;
 
         //approx document embeddings are retrieved for topK documents for each query
-        map<string, torch::Tensor> query_doc_emb_approx_map = decoder_->decode();
+        map<std::size_t, torch::Tensor> query_doc_emb_approx_map = decoder_->decode();
         //for each query, score is computed in a sequential manner
         for(std::size_t idx=0; idx<input_strings.size(); idx++){
-            auto D = query_doc_emb_approx_map[input_strings[idx]];
+            auto D = query_doc_emb_approx_map[];
             auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
             query_score_tensor_map.insert(make_pair(input_strings[idx], score));
         }

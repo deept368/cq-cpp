@@ -15,6 +15,11 @@
 #define TORCH_DTYPE torch::kFloat32
 #define SIMILARITY_METRIC "cosine"
 #define CODEBOOK_DIM 8
+#define QUERY_FILE "../data/msmarco-test2019-queries-qrel.tsv"
+#define RESULTS_FILE "../data/retrieval-results.tsv"
+#define BASE_STORE_FILE "../data/output_result/result_"
+#define STORE_SIZE 256
+
 
 
 #endif
