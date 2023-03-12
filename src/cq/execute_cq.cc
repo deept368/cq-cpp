@@ -48,7 +48,7 @@ namespace lh{
         std::vector<std::string> input_strings;
 
         //approx document embeddings are retrieved for topK documents for each query
-        map<std::size_t, map<std::string, torch::Tensor>> query_doc_emb_approx_map = decoder_->decode();
+        map<int, map<std::string, torch::Tensor>> query_doc_emb_approx_map = decoder_->decode();
 
         for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
             std::string input_string = query_processor_->getQuery(query_doc_emb_pair.first);
