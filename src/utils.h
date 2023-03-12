@@ -121,7 +121,7 @@ namespace lh {
     inline string get_hex(uint32_t num){
         bitset<32> bits(num); // convert to binary string of length 32
         stringstream ss;
-        ss << hex << uppercase << bits.to_ulong(); // convert binary string to hex string
+        ss << setfill('0') << setw(8) << hex << uppercase << bits.to_ulong(); // convert binary string to hex string
         string hex_string = ss.str();
         return hex_string;
     }
