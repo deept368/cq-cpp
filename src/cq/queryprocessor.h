@@ -16,7 +16,6 @@ namespace lh{
     {
     private:
         unordered_map<std::size_t, string> queryMapping;
-        unordered_map<string, std::size_t> queryIdMapping;
         unordered_map<std::size_t, vector<string>> queryResults;
         static CodeFetcher* code_fetcher;
 
@@ -30,7 +29,6 @@ namespace lh{
         ~QueryProcessor();
         unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> getCodes();
         string getQuery(std::size_t queryId);
-        size_t getQueryId(string queryId);
         void print_doc_data(unordered_map<string, vector<vector<std::size_t>>> doc_data_map);
        
     };

@@ -39,7 +39,6 @@ namespace lh
             query = line.substr(start);
             
             queryMapping[stoi(queryId)] = query;
-            queryIdMapping[query] = stoi(queryId);
         }
         file.close();
     }
@@ -67,14 +66,6 @@ namespace lh
             return "";
         }
         return queryMapping[queryId];
-    }
-
-    size_t QueryProcessor::getQueryId(string query){
-        if (queryIdMapping.find(query) == queryIdMapping.end()) {
-            cerr << "Query ID " << query << " not found." << endl;
-            return -1;
-        }
-        return queryIdMapping[query];
     }
 
     vector<string> QueryProcessor::getQueryResults(std::size_t queryId){
