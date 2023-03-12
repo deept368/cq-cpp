@@ -101,7 +101,7 @@ namespace lh
     void QueryProcessor::print_doc_data(unordered_map<string, vector<vector<std::size_t>>> doc_data_map){
         // print document data
         for (auto p : doc_data_map){
-            cout << "Document " << p.first << ": (" << p.second.size() << " tokens)" << endl;
+                cout << "Document " << p.first << ": (" << p.second.size() << " tokens)" << endl;
             for (auto d : p.second){
                 for (int i = 0; i < d.size(); i++)
                     cout << d.at(i) << ",";

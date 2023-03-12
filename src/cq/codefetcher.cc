@@ -18,7 +18,7 @@ using namespace std;
 
 namespace lh{
 
-    CodeFetcher::CodeFetcher(string filename, uint32_t number_of_files) : base_filename(filename), number_of_files(number_of_files){
+    CodeFetcher::CodeFetcher(string filename, size_t number_of_files) : base_filename(filename), number_of_files(number_of_files){
         load_metadata();
         initialize_file_ptrs();
         initialize_key_offset_store();
@@ -49,11 +49,11 @@ namespace lh{
 
         infile.read(metadata, 128);
 
-        M = ntohl(*reinterpret_cast<uint32_t *>(&metadata[0]));
-        K = ntohl(*reinterpret_cast<uint32_t *>(&metadata[4]));
-        key_bytes = ntohl(*reinterpret_cast<uint32_t *>(&metadata[12]));
-        offset_bytes = ntohl(*reinterpret_cast<uint32_t *>(&metadata[16]));
-        token_bytes = ntohl(*reinterpret_cast<uint32_t *>(&metadata[20]));
+        M = ntohl(*reinterpret_cast<size_t *>(&metadata[0]));
+        K = ntohl(*reinterpret_cast<size_t *>(&metadata[4]));
+        key_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[12]));
+        offset_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[16]));
+        token_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[20]));
 
         infile.close();
     }
@@ -75,7 +75,7 @@ namespace lh{
         }
 
         // Read metadata
-        uint32_t M, K, num_docs, key_bytes, offset_bytes, token_bytes, remaining;
+        size_t M, K, num_docs, key_bytes, offset_bytes, token_bytes, remaining;
         char metadata[128]; // initialize to null bytes
 
         infile.read(metadata, 128);
@@ -91,10 +91,11 @@ namespace lh{
             doc_key = ntohl(*reinterpret_cast<uint32_t *>(&data[0]));
             doc_offset = ntohl(*reinterpret_cast<uint32_t *>(&data[4]));
 
+
             key_offset_store[get_hex(doc_key)] = doc_offset;
         }
-        // cout << key_offset_store.size() << endl;
         num_docs += num_docs;
+
         return true;
     }
 
@@ -126,7 +127,7 @@ namespace lh{
                 char buffer[18];
                 file.read(buffer, 18);
 
-                token_id = ntohs(*(reinterpret_cast<uint16_t *>(buffer)));
+                token_id = ntohs(*(reinterpret_cast<size_t *>(buffer)));
                 vector<std::size_t> token_data;
                 token_data.push_back(token_id);
                 for (int i = 2; i < 18; i++)
