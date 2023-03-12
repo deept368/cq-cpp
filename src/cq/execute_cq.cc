@@ -75,6 +75,7 @@ namespace lh{
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
 
             auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
+            cout<<"score "<<score<<endl;
             //query_score_tensor_map.insert(make_pair(query_id, score));
 
             std::size_t doc_idx = 0;

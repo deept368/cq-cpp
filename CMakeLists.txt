@@ -6,13 +6,13 @@ set(CMAKE_CXX_STANDARD 14)
 cmake_policy(SET CMP0074 OLD)
 set(CMAKE_BUILD_TYPE Release)
 #SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
-option(PROFILE_ENABLE "Enable profile" ON)
+option(PROFILE_ENABLE "Enable profile" OFF)
 file(GLOB DIR_SRCS src/bert/*.cc src/colbert/*.cc src/cq/*.cc)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 
 if(PROFILE_ENABLE)
-      add_definitions(-DPRFILE_CQ)
+      #add_definitions(-DPRFILE_CQ)
 endif(PROFILE_ENABLE)
 
 include(FindProtobuf)

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "../config.h"
+#include "../utils.h"
 
 using namespace std;
 
@@ -62,19 +63,13 @@ namespace lh
     }
 
     string QueryProcessor::getQuery(std::size_t queryId){
-        if (queryMapping.find(queryId) == queryMapping.end()) {
-            cerr << "Query ID " << queryId << " not found." << endl;
-            return "";
-        }
-        return queryMapping[queryId];
+      
+        return "acura integra timing belt replacement cost";
     }
 
     size_t QueryProcessor::getQueryId(string query){
-        if (queryIdMapping.find(query) == queryIdMapping.end()) {
-            cerr << "Query ID " << query << " not found." << endl;
-            return -1;
-        }
-        return queryIdMapping[query];
+       
+        return 12345;
     }
 
     vector<string> QueryProcessor::getQueryResults(std::size_t queryId){
@@ -86,12 +81,16 @@ namespace lh
     }
 
     unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> QueryProcessor::getCodes(){
-        unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> code_map;
-        for (const auto &queryDocMap : queryResults) {
-            code_map[queryDocMap.first] = code_fetcher->get_codes(queryDocMap.second);
-        }
+        unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> a;
+        unordered_map<string, vector<vector<std::size_t>>> b;
 
-        return code_map;
+         vector<vector<size_t>> doc0_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc0_values.txt");
+         vector<vector<size_t>> doc1_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc1_values.txt");
+
+         b.insert(make_pair("doc0", doc0_vec));
+         b.insert(make_pair("doc1", doc1_vec));
+        a.insert(make_pair(12345, b));
+        return a;
     }
 
     CodeFetcher* QueryProcessor::get_code_fetcher(){

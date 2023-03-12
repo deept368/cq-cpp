@@ -45,7 +45,14 @@ namespace lh{
         auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
         auto bert_output_tensor = torch::from_blob(vec_bert_output.data(),
                                   {1, int(vec_bert_output.size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
- 
+
+        // cout<<bert_output_tensor[0][0][0]<<endl;
+        // cout<<bert_output_tensor[0][0][1]<<endl;
+        // cout<<bert_output_tensor[0][1][2]<<endl;
+        // cout<<bert_output_tensor[0][31][0]<<endl;
+        // cout<<bert_output_tensor[0][31][1]<<endl;
+        // cout<<bert_output_tensor[0][31][767]<<endl;
+
         //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
         torch::Tensor linear_layer_weight_tensor;
         torch::load(linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
@@ -56,11 +63,20 @@ namespace lh{
         //finally, linear_ouptut is normalised and returned
         auto normalised_output = torch::nn::functional::normalize(linear_output,
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
+
+        // cout<<normalised_output[0][0][0]<<endl;
+        // cout<<normalised_output[0][0][1]<<endl;
+        // cout<<normalised_output[0][1][2]<<endl;
+        // cout<<normalised_output[0][12][0]<<endl;
+        // cout<<normalised_output[0][12][1]<<endl;
+        // cout<<normalised_output[0][12][127]<<endl;
          #ifdef PRFILE_CQ
             auto end = std::chrono::system_clock::now();
             std::cout<<"query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
         #endif
         
+      
+
         return normalised_output;
     }
     

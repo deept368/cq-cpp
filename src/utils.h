@@ -98,17 +98,17 @@ namespace lh {
         return ans;
     }
 
-    inline std::vector<std::vector<int>> get_vec_of_vecs_from_file(std::string file_path){
+    inline std::vector<std::vector<size_t>> get_vec_of_vecs_from_file(std::string file_path){
         ifstream file(file_path);
 
-        vector<vector<int>> vec;
+        vector<vector<size_t>> vec;
 
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
             int num;
 
-            vector<int> innerVec;
+            vector<size_t> innerVec;
             while (ss >> num) {
                 innerVec.push_back(num);
             }

@@ -86,6 +86,7 @@ namespace lh{
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
         unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> fetched_codes = query_processor_->getCodes();
+       // cout<<"map "<<fetched_codes[12345]["doc0"]<<endl;
         map<std::size_t, map<std::string,torch::Tensor>> query_doc_approx_emb_map;
 
          #ifdef PRFILE_CQ
@@ -106,9 +107,15 @@ namespace lh{
                     token_vec.erase(token_vec.begin());   
                 }
 
+                // if(doc_codes_pairs.first == "doc0"){
+                //     cout<<tokens<<endl;
+                // }
+
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
                 auto token_tensor = torch::from_blob(tokens.data(), {(std::int64_t)tokens.size()}, torch::kInt);
                 auto static_embs = non_contextual_embedding->forward(token_tensor);
+
+               
                 
                 //compute the approx embeddings for the document using the codes and codebook
                 auto linear_codes_vec = linearize_vector_of_vectors(codes_vec);
@@ -122,6 +129,14 @@ namespace lh{
                 auto decoded = torch::matmul(codebook, code_sparse.unsqueeze(-1)).squeeze(-1);
                 auto codeapprox = decoded.reshape({decoded.size(0), (std::int64_t)M_*(std::int64_t)codebook_dim_});
                 
+                //  if(doc_codes_pairs.first == "doc0"){
+                //     cout<<"static "<<codeapprox[0][1]<<endl;
+                //      cout<<"static "<<codeapprox[0][2]<<endl;
+                //       cout<<"static "<<codeapprox[1][1]<<endl;
+                //        cout<<"static "<<codeapprox[55][0]<<endl;
+                //        cout<<"static "<<codeapprox[55][127]<<endl;
+                // }
+
 
                 //static_embs and approx_codes are concatenated
                 auto cat_res = torch::cat({codeapprox, static_embs}, 1);
@@ -133,6 +148,10 @@ namespace lh{
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
                 torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
                 full_tensor.slice(1, 0, tokens.size()) = composition_result;
+                // cout<<doc_codes_pairs.first<<" "<<full_tensor[0][0][0]<<endl;
+                // cout<<doc_codes_pairs.first<<" "<<full_tensor[0][0][1]<<endl;
+                // cout<<doc_codes_pairs.first<<" "<<full_tensor[0][36][127]<<endl;
+                // cout<<doc_codes_pairs.first<<" "<<full_tensor[0][55][127]<<endl;
                 docId_emb_map.insert(make_pair(doc_codes_pairs.first, full_tensor));
             }           
             query_doc_approx_emb_map.insert(make_pair(query_doc_pairs.first, docId_emb_map));      
