@@ -108,8 +108,6 @@ namespace lh{
                     token_vec.erase(token_vec.begin());   
                 }
 
-                
-                
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
                 auto token_tensor = torch::from_blob(tokens.data(), {(std::int64_t)tokens.size()}, torch::kInt);
                 auto static_embs = non_contextual_embedding->forward(token_tensor);

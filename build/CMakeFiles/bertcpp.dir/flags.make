@@ -6,5 +6,5 @@ CXX_DEFINES = -DPRFILE_CQ -DUSE_C10D_GLOO -DUSE_DISTRIBUTED -DUSE_RPC -DUSE_TENS
 
 CXX_INCLUDES = -isystem /opt/intel/mkl/include -isystem /home/deept/cq-cpp/libtorch/include -isystem /home/deept/cq-cpp/libtorch/include/torch/csrc/api/include
 
-CXX_FLAGS = -O2 -fPIC -D_GLIBCXX_USE_CXX11_ABI=1 -std=gnu++14
+CXX_FLAGS =  -O3 -O3 -DNDEBUG -fPIC -D_GLIBCXX_USE_CXX11_ABI=1 -std=gnu++14
 

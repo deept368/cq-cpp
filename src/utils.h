@@ -48,7 +48,7 @@ namespace lh {
             int idx =0;
         // iterate over the inner map
         for (const auto& innerPair : outerValue) {
-            if(idx == 6){
+            if(idx == 1){
                 break;
             }
             const std::string& innerKey = innerPair.first;

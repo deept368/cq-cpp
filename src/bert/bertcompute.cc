@@ -100,7 +100,7 @@ namespace lh{
         int curr_batch_size = input_string.size();
 
         //necessary tokens are added and the input strings are converted to tokens
-        std::vector<std::vector<std::string>> input_tokens(2);
+        std::vector<std::vector<std::string>> input_tokens(curr_batch_size);
         for (std::size_t i = 0; i < curr_batch_size; i++){
             tokenizer_->tokenize(input_string[i].c_str(), &input_tokens[i], query_maxlen);
             if(isQuery){

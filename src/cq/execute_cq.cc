@@ -53,14 +53,16 @@ namespace lh{
         auto Q_all = query_encoder_->encode(input_strings);
         map<string, torch::Tensor> query_score_tensor_map;
 
-       
+        std::size_t idx = 0;
         //for each query, score is computed in a sequential manner
-        for(std::size_t idx=0; idx<input_strings.size(); idx++){
-            std::size_t query_id = query_processor_->getQueryId(input_strings[idx]);
-            auto D = query_doc_emb_approx_map[query_id];
+        for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
+            std::size_t query_id = query_doc_emb_pair.first;
+            auto D = query_doc_emb_pair.second;
             auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
-            query_score_tensor_map.insert(make_pair(input_strings[idx], score));
+            query_score_tensor_map.insert(make_pair(query_id, score));
+            idx++;
         }
+
         cout<<query_score_tensor_map<<endl;
 
         #ifdef PRFILE_CQ
