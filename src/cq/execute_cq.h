@@ -23,5 +23,6 @@ namespace lh{
             QueryEncoder<float>* query_encoder_;
             Score* score_;
             QueryProcessor* query_processor_;
+
     };
 }

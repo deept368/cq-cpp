@@ -32,7 +32,7 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<std::size_t, torch::Tensor> Decoder::decode(){
+     map<std::size_t, map<std::string,torch::Tensor>> Decoder::decode(){
 
         #ifdef PRFILE_CQ
             auto begin = std::chrono::system_clock::now();
@@ -86,9 +86,7 @@ namespace lh{
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
         unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> fetched_codes = query_processor_->getCodes();
-        cout<<"fetched "<<endl;
-        printMap(fetched_codes);
-        map<std::size_t, torch::Tensor> query_doc_approx_emb_map;
+        map<std::size_t, map<std::string,torch::Tensor>> query_doc_approx_emb_map;
 
          #ifdef PRFILE_CQ
             auto begin_3 = std::chrono::system_clock::now();
@@ -97,7 +95,7 @@ namespace lh{
         //we loop over each query string
         for (auto&  query_doc_pairs : fetched_codes) {
             unordered_map<string, vector<vector<std::size_t>>>& document_to_codes_map = query_doc_pairs.second;
-            std::vector<torch::Tensor> approx_tensors;
+            map<std::string, torch::Tensor> docId_emb_map;
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : document_to_codes_map) {
                 vector<vector<std::size_t>>& codes_vec = doc_codes_pairs.second;
@@ -135,13 +133,9 @@ namespace lh{
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
                 torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
                 full_tensor.slice(1, 0, tokens.size()) = composition_result;
-                approx_tensors.push_back(full_tensor);
-            }
-            //all approx embedding tensors for topk documents for a query are concatenated and normailised and put in a map correponding to the query string
-            auto doc_emb_approx = torch::cat(approx_tensors, 0);
-            doc_emb_approx = torch::nn::functional::normalize(doc_emb_approx,
-                                 torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
-            query_doc_approx_emb_map.insert(make_pair(query_doc_pairs.first, doc_emb_approx));      
+                docId_emb_map.insert(make_pair(doc_codes_pairs.first, full_tensor));
+            }           
+            query_doc_approx_emb_map.insert(make_pair(query_doc_pairs.first, docId_emb_map));      
         }
 
         #ifdef PRFILE_CQ

@@ -48,7 +48,7 @@ namespace lh {
             int idx =0;
         // iterate over the inner map
         for (const auto& innerPair : outerValue) {
-            if(idx == 1){
+            if(idx == 5){
                 break;
             }
             const std::string& innerKey = innerPair.first;
@@ -138,7 +138,13 @@ namespace lh {
 
         return hex_hash;
     }
-   
+
+    inline std::string format_trec_line(const std::size_t query_id, const std::string& doc_id, int rank, float score, const std::string& run_id) {
+        std::stringstream ss;
+        ss << query_id << " Q0 " << doc_id << " " << rank << " " << score << " " << run_id << std::endl;
+        return ss.str();
+    }
+
 
 
 }
