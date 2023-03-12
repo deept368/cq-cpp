@@ -36,20 +36,39 @@ namespace lh {
         }
         return ans;
     }
+
+
     
-    // template<class T>
-    // auto convert_linear_vec_to_2d_tensor(std::vector<T> input, std::int64_t rows, std::int64_t cols){
-    //     auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
-    //     auto data = torch::from_blob(input.data(), {1, int(input.size())}, options);
-    //     auto ans = data.view({rows, cols});
-    //    // checked and this works
-    //     for(int i=0; i<5; i++){
-    //         std::cout<<"index : "<<i<<std::endl;
-    //         std::cout<<input[0*768+i]<<" ";
-    //         std::cout<<ans[0][i]<<std::endl;
-    //     }
-    //     return ans;
-    // }
+    inline void printMap( unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> myMap){
+        for (const auto& outerPair : myMap) {
+        const std::size_t outerKey = outerPair.first;
+        const auto& outerValue = outerPair.second;
+
+        std::cout << "Outer key: " << outerKey << std::endl;
+            int idx =0;
+        // iterate over the inner map
+        for (const auto& innerPair : outerValue) {
+            if(idx == 6){
+                break;
+            }
+            const std::string& innerKey = innerPair.first;
+            const auto& innerValue = innerPair.second;
+
+            std::cout << "    Inner key: " << innerKey << std::endl;
+
+            // iterate over the vectors
+            for (const auto& vector : innerValue) {
+                std::cout << "        Vector: ";
+                for (const auto& element : vector) {
+                    std::cout << element << " ";
+                }
+                std::cout << std::endl;
+            }
+            idx++;
+        }
+        break;
+        }
+    }
 
     inline std::vector<float> get_vec_from_file(std::string file_path){
         std::vector<float> ans;

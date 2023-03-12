@@ -646,6 +646,30 @@ src/cq/execute_cq.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.s
 .PHONY : src/cq/execute_cq.cc.s
 
+src/cq/queryprocessor.o: src/cq/queryprocessor.cc.o
+.PHONY : src/cq/queryprocessor.o
+
+# target to build an object file
+src/cq/queryprocessor.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o
+.PHONY : src/cq/queryprocessor.cc.o
+
+src/cq/queryprocessor.i: src/cq/queryprocessor.cc.i
+.PHONY : src/cq/queryprocessor.i
+
+# target to preprocess a source file
+src/cq/queryprocessor.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.i
+.PHONY : src/cq/queryprocessor.cc.i
+
+src/cq/queryprocessor.s: src/cq/queryprocessor.cc.s
+.PHONY : src/cq/queryprocessor.s
+
+# target to generate assembly for a file
+src/cq/queryprocessor.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.s
+.PHONY : src/cq/queryprocessor.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -719,6 +743,9 @@ help:
 	@echo "... src/cq/execute_cq.o"
 	@echo "... src/cq/execute_cq.i"
 	@echo "... src/cq/execute_cq.s"
+	@echo "... src/cq/queryprocessor.o"
+	@echo "... src/cq/queryprocessor.i"
+	@echo "... src/cq/queryprocessor.s"
 .PHONY : help
 
 
