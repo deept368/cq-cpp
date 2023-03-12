@@ -18,7 +18,7 @@ using namespace std;
 
 namespace lh{
 
-    CodeFetcher::CodeFetcher(string filename, size_t number_of_files) : base_filename(filename), number_of_files(number_of_files){
+    CodeFetcher::CodeFetcher(string filename, int number_of_files) : base_filename(filename), number_of_files(number_of_files){
         load_metadata();
         initialize_file_ptrs();
         initialize_key_offset_store();
@@ -49,11 +49,11 @@ namespace lh{
 
         infile.read(metadata, 128);
 
-        M = ntohl(*reinterpret_cast<size_t *>(&metadata[0]));
-        K = ntohl(*reinterpret_cast<size_t *>(&metadata[4]));
-        key_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[12]));
-        offset_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[16]));
-        token_bytes = ntohl(*reinterpret_cast<size_t *>(&metadata[20]));
+        M = ntohl(*reinterpret_cast<int *>(&metadata[0]));
+        K = ntohl(*reinterpret_cast<int *>(&metadata[4]));
+        key_bytes = ntohl(*reinterpret_cast<int *>(&metadata[12]));
+        offset_bytes = ntohl(*reinterpret_cast<int *>(&metadata[16]));
+        token_bytes = ntohl(*reinterpret_cast<int *>(&metadata[20]));
 
         infile.close();
     }
@@ -75,7 +75,7 @@ namespace lh{
         }
 
         // Read metadata
-        size_t M, K, num_docs, key_bytes, offset_bytes, token_bytes, remaining;
+        int M, K, num_docs, key_bytes, offset_bytes, token_bytes, remaining;
         char metadata[128]; // initialize to null bytes
 
         infile.read(metadata, 128);
@@ -109,26 +109,26 @@ namespace lh{
         }
     }
 
-    unordered_map<string, vector<vector<std::size_t>>> CodeFetcher::get_codes(vector<string> document_ids){
+    unordered_map<string, vector<vector<int>>> CodeFetcher::get_codes(vector<string> document_ids){
         // read document data
-        unordered_map<string, vector<vector<std::size_t>>> doc_data_map;
+        unordered_map<string, vector<vector<int>>> doc_data_map;
         for (auto doc_id : document_ids){
-            std::size_t i = 0;
+            int i = 0;
             string md5_hex = compute_hash(doc_id);
-            std::size_t file_idx = stoi(doc_id) % 256;
-            std::size_t bit_offset = key_offset_store[md5_hex];
+            int file_idx = stoi(doc_id) % 256;
+            int bit_offset = key_offset_store[md5_hex];
 
             ifstream &file = *file_ptrs[file_idx];
             file.seekg(bit_offset / 8, ios::beg);
-            std::size_t token_id = -1;
-            vector<vector<std::size_t>> doc_data;
+            int token_id = -1;
+            vector<vector<int>> doc_data;
 
             while (token_id != 102){
                 char buffer[18];
                 file.read(buffer, 18);
 
-                token_id = ntohs(*(reinterpret_cast<size_t *>(buffer)));
-                vector<std::size_t> token_data;
+                token_id = ntohs(*(reinterpret_cast<int *>(buffer)));
+                vector<int> token_data;
                 token_data.push_back(token_id);
                 for (int i = 2; i < 18; i++)
                 {

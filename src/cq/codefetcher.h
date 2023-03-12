@@ -16,10 +16,10 @@ namespace lh{
     {
         private:
             string base_filename;
-            size_t M, K, num_docs = 0, key_bytes, offset_bytes, token_bytes;
-            size_t number_of_files;
+            int M, K, num_docs = 0, key_bytes, offset_bytes, token_bytes;
+            int number_of_files;
             vector<ifstream *> file_ptrs;
-            unordered_map<string, size_t> key_offset_store;
+            unordered_map<string, int> key_offset_store;
 
             void load_metadata();
             void initialize_file_ptrs();
@@ -30,9 +30,9 @@ namespace lh{
 
         public:
             // Constructor
-            CodeFetcher(string filename, size_t number_of_files);
+            CodeFetcher(string filename, int number_of_files);
             ~CodeFetcher();
-            unordered_map<string, vector<vector<std::size_t>>> get_codes(vector<string> document_ids);
+            unordered_map<string, vector<vector<int>>> get_codes(vector<string> document_ids);
     };
 }
 

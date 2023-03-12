@@ -99,7 +99,7 @@ namespace lh{
             map<std::string, torch::Tensor> docId_emb_map;
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : document_to_codes_map) {
-                string doc_id = document_to_codes_map.first;
+                string doc_id = doc_codes_pairs.first;
                 vector<vector<int>>& codes_vec = doc_codes_pairs.second;
                 vector<int> tokens;
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 

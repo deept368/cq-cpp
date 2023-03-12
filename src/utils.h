@@ -39,9 +39,9 @@ namespace lh {
 
 
     
-    inline void printMap( unordered_map<std::size_t, unordered_map<string, vector<vector<std::size_t>>>> myMap){
+    inline void printMap( unordered_map<int, unordered_map<string, vector<vector<int>>>> myMap){
         for (const auto& outerPair : myMap) {
-        const std::size_t outerKey = outerPair.first;
+        const int outerKey = outerPair.first;
         const auto& outerValue = outerPair.second;
 
         std::cout << "Outer key: " << outerKey << std::endl;
@@ -139,7 +139,7 @@ namespace lh {
         return hex_hash;
     }
 
-    inline std::string format_trec_line(const std::size_t query_id, const std::string& doc_id, int rank, float score, const std::string& run_id) {
+    inline std::string format_trec_line(const int query_id, const std::string& doc_id, int rank, float score, const std::string& run_id) {
         std::stringstream ss;
         ss << query_id << " Q0 " << doc_id << " " << rank << " " << score << " " << run_id << std::endl;
         return ss.str();
