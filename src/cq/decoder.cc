@@ -65,7 +65,7 @@ namespace lh{
 
         #ifdef PRFILE_CQ
             auto end_2 = std::chrono::system_clock::now();
-            std::cout<<"codebok loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_2-begin_2).count())/1000 << std::endl;
+            std::cout<<"codebook loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_2-begin_2).count())/1000 << std::endl;
         #endif
 
         //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
