@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "../config.h"
+#include "../utils.h"
 
 using namespace std;
 
@@ -10,95 +11,34 @@ namespace lh
 {
 
     QueryProcessor::QueryProcessor(){
-
-        readQueryMapping(QUERY_FILE);
-        readQueryResults(RESULTS_FILE);
     }
 
     QueryProcessor::~QueryProcessor(){
-        delete code_fetcher;
+       
     }   
     
-    CodeFetcher* QueryProcessor::code_fetcher = new CodeFetcher(BASE_STORE_FILE, STORE_SIZE);
-
-    void QueryProcessor::readQueryMapping(string queryFile){
-        ifstream file(queryFile);
-        if (!file) {
-            cerr << "Error opening query file: " << queryFile << endl;
-            return;
-        }
-
-        string line;
-        while (getline(file, line)) {
-            istringstream ss(line);
-            string queryId, query;
-            ss >> queryId;
-            
-            // Extract substring starting from first non-tab character
-            int start = line.find_first_not_of('\t', queryId.length());
-            query = line.substr(start);
-            
-            queryMapping[stoi(queryId)] = query;
-        }
-        file.close();
-    }
-
-    void QueryProcessor::readQueryResults(string resultFile){
-        ifstream file(resultFile);
-        if (!file) {
-            cerr << "Error opening result file: " << resultFile << endl;
-            return;
-        }
-
-        string line;
-        while (getline(file, line)){
-            istringstream ss(line);
-            string queryId, temp1, docId, temp2, temp3, temp4;
-            ss >> queryId >> temp1 >> docId >> temp2 >> temp3 >> temp4;
-            queryResults[stoi(queryId)].push_back(docId);
-        }
-        file.close();
-    }
-
+   
     string QueryProcessor::getQuery(int queryId){
-        if (queryMapping.find(queryId) == queryMapping.end()) {
-            cerr << "Query ID " << queryId << " not found." << endl;
-            return "";
-        }
-        return queryMapping[queryId];
+       return "acura integra timing belt replacement cost";
     }
 
-    vector<string> QueryProcessor::getQueryResults(int queryId){
-        if (queryResults.find(queryId) == queryResults.end()){
-            cerr << "Query ID " << queryId << " not found." << endl;
-            return vector<string>();
-        }
-        return queryResults[queryId];
-    }
+    
 
     unordered_map<int, unordered_map<string, vector<vector<int>>>> QueryProcessor::getCodes(){
-        unordered_map<int, unordered_map<string, vector<vector<int>>>> code_map;
-        for (const auto &queryDocMap : queryResults) {
-            code_map[queryDocMap.first] = code_fetcher->get_codes(queryDocMap.second);
-        }
+        unordered_map<int, unordered_map<string, vector<vector<int>>>> result;
+         unordered_map<string, vector<vector<int>>> internal_map;
 
-        return code_map;
+         vector<vector<int>> doc0_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc0_values.txt");
+         vector<vector<int>> doc1_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc1_values.txt");
+
+         internal_map.insert(make_pair("doc0", doc0_vec));
+         internal_map.insert(make_pair("doc1", doc1_vec));
+
+         result.insert(make_pair(12345, internal_map));
+
+         return result;
     }
 
-    CodeFetcher* QueryProcessor::get_code_fetcher(){
-        return code_fetcher;
-    }
-
-    void QueryProcessor::print_doc_data(unordered_map<string, vector<vector<int>>> doc_data_map){
-        // print document data
-        for (auto p : doc_data_map){
-                cout << "Document " << p.first << ": (" << p.second.size() << " tokens)" << endl;
-            for (auto d : p.second){
-                for (int i = 0; i < d.size(); i++)
-                    cout << d.at(i) << ",";
-                cout << endl;
-            }
-            cout << endl;
-        }
-    }
+    
+    
 };

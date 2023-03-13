@@ -33,8 +33,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/bertcpp.dir/src/colbert/queryencoder.cc.o.d"
   "CMakeFiles/bertcpp.dir/src/colbert/score.cc.o"
   "CMakeFiles/bertcpp.dir/src/colbert/score.cc.o.d"
-  "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o"
-  "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o.d"
   "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o"
   "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o.d"
   "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o"

@@ -5156,5 +5156,4 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: \
  /home/deept/cq-cpp/src/cq/../config.h \
  /home/deept/cq-cpp/src/cq/../utils.h \
  /home/deept/cq-cpp/src/cq/../config.h \
- /home/deept/cq-cpp/src/cq/queryprocessor.h \
- /home/deept/cq-cpp/src/cq/codefetcher.h
+ /home/deept/cq-cpp/src/cq/queryprocessor.h

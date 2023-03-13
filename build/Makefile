@@ -574,30 +574,6 @@ src/colbert/score.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/colbert/score.cc.s
 .PHONY : src/colbert/score.cc.s
 
-src/cq/codefetcher.o: src/cq/codefetcher.cc.o
-.PHONY : src/cq/codefetcher.o
-
-# target to build an object file
-src/cq/codefetcher.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o
-.PHONY : src/cq/codefetcher.cc.o
-
-src/cq/codefetcher.i: src/cq/codefetcher.cc.i
-.PHONY : src/cq/codefetcher.i
-
-# target to preprocess a source file
-src/cq/codefetcher.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.i
-.PHONY : src/cq/codefetcher.cc.i
-
-src/cq/codefetcher.s: src/cq/codefetcher.cc.s
-.PHONY : src/cq/codefetcher.s
-
-# target to generate assembly for a file
-src/cq/codefetcher.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/bertcpp.dir/build.make CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.s
-.PHONY : src/cq/codefetcher.cc.s
-
 src/cq/decoder.o: src/cq/decoder.cc.o
 .PHONY : src/cq/decoder.o
 
@@ -734,9 +710,6 @@ help:
 	@echo "... src/colbert/score.o"
 	@echo "... src/colbert/score.i"
 	@echo "... src/colbert/score.s"
-	@echo "... src/cq/codefetcher.o"
-	@echo "... src/cq/codefetcher.i"
-	@echo "... src/cq/codefetcher.s"
 	@echo "... src/cq/decoder.o"
 	@echo "... src/cq/decoder.i"
 	@echo "... src/cq/decoder.s"

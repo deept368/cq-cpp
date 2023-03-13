@@ -5156,5 +5156,4 @@ CMakeFiles/bert_sample.dir/bert-sample.cpp.o: \
  /home/deept/cq-cpp/src/cq/../config.h \
  /home/deept/cq-cpp/src/cq/../utils.h \
  /home/deept/cq-cpp/src/cq/../config.h \
- /home/deept/cq-cpp/src/cq/queryprocessor.h \
- /home/deept/cq-cpp/src/cq/codefetcher.h
+ /home/deept/cq-cpp/src/cq/queryprocessor.h

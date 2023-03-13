@@ -307,24 +307,10 @@ CMakeFiles/bertcpp.dir/src/colbert/score.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/bertcpp.dir/src/colbert/score.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/deept/cq-cpp/src/colbert/score.cc -o CMakeFiles/bertcpp.dir/src/colbert/score.cc.s
 
-CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o: CMakeFiles/bertcpp.dir/flags.make
-CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o: /home/deept/cq-cpp/src/cq/codefetcher.cc
-CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o: CMakeFiles/bertcpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o -MF CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o.d -o CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o -c /home/deept/cq-cpp/src/cq/codefetcher.cc
-
-CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/deept/cq-cpp/src/cq/codefetcher.cc > CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.i
-
-CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/deept/cq-cpp/src/cq/codefetcher.cc -o CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.s
-
 CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o: CMakeFiles/bertcpp.dir/flags.make
 CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o: /home/deept/cq-cpp/src/cq/decoder.cc
 CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o: CMakeFiles/bertcpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o -MF CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o.d -o CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o -c /home/deept/cq-cpp/src/cq/decoder.cc
 
 CMakeFiles/bertcpp.dir/src/cq/decoder.cc.i: cmake_force
@@ -338,7 +324,7 @@ CMakeFiles/bertcpp.dir/src/cq/decoder.cc.s: cmake_force
 CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: CMakeFiles/bertcpp.dir/flags.make
 CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute_cq.cc
 CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: CMakeFiles/bertcpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o -MF CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o.d -o CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o -c /home/deept/cq-cpp/src/cq/execute_cq.cc
 
 CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.i: cmake_force
@@ -352,7 +338,7 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.s: cmake_force
 CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: CMakeFiles/bertcpp.dir/flags.make
 CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: /home/deept/cq-cpp/src/cq/queryprocessor.cc
 CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: CMakeFiles/bertcpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o -MF CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o.d -o CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o -c /home/deept/cq-cpp/src/cq/queryprocessor.cc
 
 CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.i: cmake_force
@@ -382,7 +368,6 @@ bertcpp_OBJECTS = \
 "CMakeFiles/bertcpp.dir/src/bert/transformer.cc.o" \
 "CMakeFiles/bertcpp.dir/src/colbert/queryencoder.cc.o" \
 "CMakeFiles/bertcpp.dir/src/colbert/score.cc.o" \
-"CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o" \
 "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o" \
 "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o" \
 "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o"
@@ -407,7 +392,6 @@ libbertcpp.so: CMakeFiles/bertcpp.dir/src/bert/tokenizer.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/bert/transformer.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/colbert/queryencoder.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/colbert/score.cc.o
-libbertcpp.so: CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o
 libbertcpp.so: CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o
@@ -423,7 +407,7 @@ libbertcpp.so: /usr/local/lib/libutf8proc.a
 libbertcpp.so: /usr/local/lib/libprotobuf.so
 libbertcpp.so: /home/deept/cq-cpp/libtorch/lib/libc10.so
 libbertcpp.so: CMakeFiles/bertcpp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX shared library libbertcpp.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/deept/cq-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX shared library libbertcpp.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/bertcpp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

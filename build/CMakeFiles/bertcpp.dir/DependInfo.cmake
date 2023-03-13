@@ -25,7 +25,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/deept/cq-cpp/src/bert/transformer.cc" "CMakeFiles/bertcpp.dir/src/bert/transformer.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/bert/transformer.cc.o.d"
   "/home/deept/cq-cpp/src/colbert/queryencoder.cc" "CMakeFiles/bertcpp.dir/src/colbert/queryencoder.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/colbert/queryencoder.cc.o.d"
   "/home/deept/cq-cpp/src/colbert/score.cc" "CMakeFiles/bertcpp.dir/src/colbert/score.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/colbert/score.cc.o.d"
-  "/home/deept/cq-cpp/src/cq/codefetcher.cc" "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/codefetcher.cc.o.d"
   "/home/deept/cq-cpp/src/cq/decoder.cc" "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o.d"
   "/home/deept/cq-cpp/src/cq/execute_cq.cc" "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o.d"
   "/home/deept/cq-cpp/src/cq/queryprocessor.cc" "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o" "gcc" "CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o.d"
