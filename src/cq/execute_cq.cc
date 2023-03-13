@@ -63,7 +63,7 @@ namespace lh{
         std::size_t idx = 0;
         //for each query, score is computed in a sequential manner
         for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
-            std::size_t query_id = query_doc_emb_pair.first;
+            int query_id = query_doc_emb_pair.first;
 
             std::vector<torch::Tensor> approx_tensors;
             for (auto& doc_emb_pairs : query_doc_emb_pair.second){
@@ -85,14 +85,16 @@ namespace lh{
                 doc_id_score_map.insert(make_pair(doc_id, score[doc_idx].item<float>()));    
                 doc_idx++;
             }
+           
 
             vector<pair<std::string, float>> doc_id_score_vec(doc_id_score_map.begin(), doc_id_score_map.end());
             sort(doc_id_score_vec.begin(), doc_id_score_vec.end(), compare_pairs);
             std::size_t rank = 1;
             for (auto& doc_id_score_pair : doc_id_score_vec) {
                 std::string doc_id = doc_id_score_pair.first;
-                std::size_t score = doc_id_score_pair.second;
+                auto score = doc_id_score_pair.second;
                 const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
+                cout<<formatted_line<<endl;
                 trec_file << formatted_line;
                 rank++;
             }
