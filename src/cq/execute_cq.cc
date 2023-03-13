@@ -24,7 +24,7 @@ namespace lh{
     }    
 
    bool compare_pairs(const pair<string, float>& p1, const pair<string, float>& p2) {
-    return p1.second < p2.second;
+    return p1.second > p2.second;
     }
 
     /**
@@ -43,7 +43,7 @@ namespace lh{
         #endif
 
         //open trec file
-        std::ofstream trec_file("output.trec");
+        std::ofstream trec_file("../output/results.trec");
 
         std::vector<std::string> input_strings;
 
@@ -58,8 +58,7 @@ namespace lh{
 
         //query input_strings are encoded
         auto Q_all = query_encoder_->encode(input_strings);
-        //map<std::size_t, torch::Tensor> query_score_tensor_map;
-
+       
         std::size_t idx = 0;
         //for each query, score is computed in a sequential manner
         for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
@@ -75,8 +74,7 @@ namespace lh{
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
 
             auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
-            //query_score_tensor_map.insert(make_pair(query_id, score));
-
+           
             std::size_t doc_idx = 0;
             map<std::string, float> doc_id_score_map;
 
