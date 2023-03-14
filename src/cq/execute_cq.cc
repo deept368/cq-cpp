@@ -92,7 +92,7 @@ namespace lh{
                 std::string doc_id = doc_id_score_pair.first;
                 auto score = doc_id_score_pair.second;
                 const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
-                cout<<formatted_line<<endl;
+                trec_file << formatted_line;
                 rank++;
             }
             idx++;
