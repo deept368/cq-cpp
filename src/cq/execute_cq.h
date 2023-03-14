@@ -1,6 +1,7 @@
 #include <torch/torch.h>
 #include "../colbert/queryencoder.h"
 #include "../colbert/score.h"
+#include "querymapping.h"
 #include "decoder.h"
 #include "../config.h"
 #include "../utils.h"
@@ -22,7 +23,7 @@ namespace lh{
             Decoder* decoder_;
             QueryEncoder<float>* query_encoder_;
             Score* score_;
-            QueryProcessor* query_processor_;
+            QueryMapping* query_mapping_;
 
     };
 }

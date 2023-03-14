@@ -1,5 +1,5 @@
 #include "execute_cq.h"
-#include "queryprocessor.h"
+
 
 #include<chrono>
 #include<iostream>
@@ -12,7 +12,7 @@ namespace lh{
        decoder_ = new Decoder();
        query_encoder_ = new QueryEncoder<float>();
        score_ = new Score();
-       query_processor_ = new QueryProcessor();
+       query_mapping_ = new QueryMapping();
     }
 
   
@@ -20,7 +20,7 @@ namespace lh{
        delete decoder_;
        delete query_encoder_;
        delete score_;
-       delete query_processor_;
+       delete query_mapping_;
     }    
 
     bool compare_pairs(const pair<string, float>& p1, const pair<string, float>& p2) {
@@ -51,7 +51,7 @@ namespace lh{
         map<int, map<std::string, torch::Tensor>> query_doc_emb_approx_map = decoder_->decode();
 
         for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
-            std::string input_string = query_processor_->getQuery(query_doc_emb_pair.first);
+            std::string input_string = query_mapping_->getQuery(query_doc_emb_pair.first);
             input_strings.push_back(input_string);
         }
 
