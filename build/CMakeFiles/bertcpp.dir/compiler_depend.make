@@ -23412,7 +23412,6 @@ CMakeFiles/bertcpp.dir/src/cq/decoder.cc.o: /home/deept/cq-cpp/src/cq/decoder.cc
   /usr/include/boost/filesystem/string_file.hpp \
   /usr/include/boost/filesystem/fstream.hpp \
   /home/deept/cq-cpp/src/cq/queryprocessor.h \
-  /home/deept/cq-cpp/src/cq/codefetcher.h \
   /home/deept/cq-cpp/libtorch/include/torch/script.h \
   /home/deept/cq-cpp/libtorch/include/torch/csrc/autograd/InferenceMode.h \
   /home/deept/cq-cpp/libtorch/include/torch/csrc/jit/runtime/custom_operator.h \
@@ -28687,8 +28686,7 @@ CMakeFiles/bertcpp.dir/src/cq/execute_cq.cc.o: /home/deept/cq-cpp/src/cq/execute
   /home/deept/cq-cpp/src/config.h \
   /home/deept/cq-cpp/src/utils.h \
   /home/deept/cq-cpp/src/config.h \
-  /home/deept/cq-cpp/src/cq/queryprocessor.h \
-  /home/deept/cq-cpp/src/cq/codefetcher.h
+  /home/deept/cq-cpp/src/cq/queryprocessor.h
 
 CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: /home/deept/cq-cpp/src/cq/queryprocessor.cc \
   /usr/include/stdc-predef.h \
@@ -28899,7 +28897,6 @@ CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: /home/deept/cq-cpp/src/cq/que
   /usr/include/c++/11/bits/stl_vector.h \
   /usr/include/c++/11/bits/stl_bvector.h \
   /usr/include/c++/11/bits/vector.tcc \
-  /home/deept/cq-cpp/src/cq/codefetcher.h \
   /home/deept/cq-cpp/src/config.h \
   /home/deept/cq-cpp/src/utils.h \
   /home/deept/cq-cpp/libtorch/include/torch/csrc/api/include/torch/torch.h \
@@ -42353,8 +42350,6 @@ CMakeFiles/bertcpp.dir/src/cq/queryprocessor.cc.o: /home/deept/cq-cpp/src/cq/que
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arccos_native.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arctan_native.h:
-
-/home/deept/cq-cpp/src/cq/codefetcher.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arctanh_native.h:
 

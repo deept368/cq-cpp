@@ -5252,8 +5252,7 @@ CMakeFiles/bert_sample.dir/bert-sample.cpp.o: /home/deept/cq-cpp/bert-sample.cpp
   /home/deept/cq-cpp/src/config.h \
   /home/deept/cq-cpp/src/utils.h \
   /home/deept/cq-cpp/src/config.h \
-  /home/deept/cq-cpp/src/cq/queryprocessor.h \
-  /home/deept/cq-cpp/src/cq/codefetcher.h
+  /home/deept/cq-cpp/src/cq/queryprocessor.h
 
 
 /home/deept/cq-cpp/src/colbert/score.h:
@@ -13339,8 +13338,6 @@ CMakeFiles/bert_sample.dir/bert-sample.cpp.o: /home/deept/cq-cpp/bert-sample.cpp
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arccos_native.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arctan_native.h:
-
-/home/deept/cq-cpp/src/cq/codefetcher.h:
 
 /home/deept/cq-cpp/libtorch/include/ATen/ops/arctanh_native.h:
 

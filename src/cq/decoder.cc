@@ -18,6 +18,28 @@ namespace lh{
         K_ = CODES_COUNT;
         codebook_dim_ = CODEBOOK_DIM;
         doc_maxlen_ = DOC_MAXLEN;
+
+         //static embedding is fetched for all the vocabulary from a .pt file into a tensor [30522(vocab_size) * 128(embedding_dim)]
+        torch::Tensor static_embeddings;
+        torch::load(static_embeddings, "../model/non_contextual_embeddings.pt");
+
+         //torch::nn::EmbeddingImpl(PyTorch C++) model is initialised and static_embeddings tensor is loaded as pretrained weight. 
+        auto embedding_options = torch::nn::EmbeddingOptions(vocab_size_, dimension_size_).padding_idx(pad_token_id_)._weight(static_embeddings);
+        non_contextual_embedding = new torch::nn::EmbeddingImpl(embedding_options);
+
+        //codebook is loaded. size: [M * codebook_dim_(8) * K]
+        torch::load(codebook, "../model/codebook.pt");
+
+        //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
+        torch::load(composition_weights, "../model/composition_c_e_linear_weights.pt");
+
+        //composition layer bias are loaded as a 1-d Tensor of [dim_size(128)]
+        torch::load(composition_bias, "../model/composition_c_e_linear_bias.pt");
+
+        //torch::nn::LinearImpl(PyTorch C++) is used to initialise a linear compositon layers and weights and bias are set
+        composition_layer = new torch::nn::LinearImpl(torch::nn::LinearOptions(2*dimension_size_, dimension_size_).bias(true));
+        composition_layer->weight = composition_weights;
+        composition_layer->bias = composition_bias;
     }
 
   
@@ -38,49 +60,6 @@ namespace lh{
             auto begin = std::chrono::system_clock::now();
         #endif
         
-        #ifdef PRFILE_CQ
-            auto begin_1 = std::chrono::system_clock::now();
-        #endif
-
-        //static embedding is fetched for all the vocabulary from a .pt file into a tensor [30522(vocab_size) * 128(embedding_dim)]
-        torch::Tensor static_embeddings;
-        torch::load(static_embeddings, "../model/non_contextual_embeddings.pt");
-
-         #ifdef PRFILE_CQ
-            auto end_1 = std::chrono::system_clock::now();
-            std::cout<<"static_embs loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_1-begin_1).count())/1000 << std::endl;
-        #endif
-
-        //torch::nn::EmbeddingImpl(PyTorch C++) model is initialised and static_embeddings tensor is loaded as pretrained weight. 
-        auto embedding_options = torch::nn::EmbeddingOptions(vocab_size_, dimension_size_).padding_idx(pad_token_id_)._weight(static_embeddings);
-        auto non_contextual_embedding = new torch::nn::EmbeddingImpl(embedding_options);
-       
-        #ifdef PRFILE_CQ
-            auto begin_2 = std::chrono::system_clock::now();
-        #endif
-
-       //codebook is loaded. size: [M * codebook_dim_(8) * K]
-        torch::Tensor codebook;
-        torch::load(codebook, "../model/codebook.pt");
-
-        #ifdef PRFILE_CQ
-            auto end_2 = std::chrono::system_clock::now();
-            std::cout<<"codebok loading time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_2-begin_2).count())/1000 << std::endl;
-        #endif
-
-        //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
-        torch::Tensor composition_weights;
-        torch::load(composition_weights, "../model/composition_c_e_linear_weights.pt");
-
-        //composition layer bias are loaded as a 1-d Tensor of [dim_size(128)]
-        torch::Tensor composition_bias;
-        torch::load(composition_bias, "../model/composition_c_e_linear_bias.pt");
-
-        //torch::nn::LinearImpl(PyTorch C++) is used to initialise a linear compositon layers and weights and bias are set
-        auto composition_layer = new torch::nn::LinearImpl(torch::nn::LinearOptions(2*dimension_size_, dimension_size_).bias(true));
-        composition_layer->weight = composition_weights;
-        composition_layer->bias = composition_bias;
-
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
