@@ -13,12 +13,15 @@
 #include <bitset>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include "../config.h"
 
 using namespace std;
 
 namespace lh{
 
-    CodeFetcher::CodeFetcher(string filename, int number_of_files) : base_filename(filename), number_of_files(number_of_files){
+    CodeFetcher::CodeFetcher(){
+        base_filename = BASE_STORE_FILE;
+        number_of_files = STORE_SIZE;
         load_metadata();
         initialize_file_ptrs();
         initialize_key_offset_store();
@@ -56,12 +59,16 @@ namespace lh{
         token_bytes = ntohl(*reinterpret_cast<int *>(&metadata[20]));
 
         infile.close();
+
+        cout << "Codefetcher: Metadata loaded successfully." << endl;
     }
 
     void CodeFetcher::initialize_file_ptrs(){
         for (int i = 0; i < number_of_files; i++) {
             file_ptrs.push_back(new ifstream(base_filename + to_string(i), ios::binary));
         }
+
+        cout << "Codefetcher: File pointers initialized successfully." << endl;
     }
 
     bool CodeFetcher::read_file(int file_num){
@@ -91,8 +98,8 @@ namespace lh{
             doc_key = ntohl(*reinterpret_cast<uint32_t *>(&data[0]));
             doc_offset = ntohl(*reinterpret_cast<uint32_t *>(&data[4]));
 
-
-            key_offset_store[get_hex(doc_key)] = doc_offset;
+            key_offset_store.insert(make_pair(get_hex(doc_key), doc_offset));
+            // key_offset_store[get_hex(doc_key)] = doc_offset;
         }
         num_docs += num_docs;
 
@@ -107,6 +114,8 @@ namespace lh{
                 cout << "Failed to read data from file " << base_filename + to_string(i) << endl;
             }
         }
+
+        cout << "Codefetcher: Document store loaded successfully." << endl;
     }
 
     unordered_map<string, vector<vector<int>>> CodeFetcher::get_codes(vector<string> document_ids){
@@ -138,7 +147,9 @@ namespace lh{
                 doc_data.push_back(token_data);
                 i++;
             }
-            doc_data_map[doc_id] = doc_data;
+
+            doc_data_map.insert(make_pair(doc_id, doc_data));
+            // doc_data_map[doc_id] = doc_data;
         }
 
         return doc_data_map;
