@@ -21,6 +21,7 @@ namespace lh{
             std::size_t dimension_size_;
 
             BertCompute<T>* bert_compute_;
+            torch::nn::LinearImpl* linear_model_;
             
     };
 }
