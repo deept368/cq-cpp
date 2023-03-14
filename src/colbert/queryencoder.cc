@@ -18,7 +18,7 @@ namespace lh{
         torch::Tensor linear_layer_weight_tensor;
         torch::load(linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
         linear_model_ = new torch::nn::LinearImpl(torch::nn::LinearOptions(hidden_size_, dimension_size_).bias(false));
-
+        linear_model_->weight = linear_layer_weight_tensor;
     }
 
     template<class T>
@@ -52,7 +52,6 @@ namespace lh{
                                   {1, int(vec_bert_output.size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
  
         //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
-        linear_model_->weight = linear_layer_weight_tensor;
         auto linear_output = linear_model_->forward(bert_output_tensor);
 
         //finally, linear_ouptut is normalised and returned
