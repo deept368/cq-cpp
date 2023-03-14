@@ -25,6 +25,12 @@ namespace lh{
             std::int64_t K_;
             std::int64_t codebook_dim_;
             std::int64_t doc_maxlen_;
+
+            torch::nn::EmbeddingImpl* non_contextual_embedding;
+            torch::Tensor codebook;
+            torch::Tensor composition_weights;
+            torch::Tensor composition_bias;
+            torch::nn::LinearImpl* composition_layer;
            
     };
 }
