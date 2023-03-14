@@ -23,8 +23,8 @@ namespace lh{
        delete query_processor_;
     }    
 
-   bool compare_pairs(const pair<string, float>& p1, const pair<string, float>& p2) {
-    return p1.second > p2.second;
+    bool compare_pairs(const pair<string, float>& p1, const pair<string, float>& p2) {
+        return p1.second > p2.second;
     }
 
     /**
