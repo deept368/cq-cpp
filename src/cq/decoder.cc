@@ -31,9 +31,11 @@ namespace lh{
         torch::load(codebook, "../model/codebook.pt");
 
         //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
+        torch::Tensor composition_weights;
         torch::load(composition_weights, "../model/composition_c_e_linear_weights.pt");
 
         //composition layer bias are loaded as a 1-d Tensor of [dim_size(128)]
+        torch::Tensor composition_bias;
         torch::load(composition_bias, "../model/composition_c_e_linear_bias.pt");
 
         //torch::nn::LinearImpl(PyTorch C++) is used to initialise a linear compositon layers and weights and bias are set

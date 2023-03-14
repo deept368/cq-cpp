@@ -28,8 +28,6 @@ namespace lh{
 
             torch::nn::EmbeddingImpl* non_contextual_embedding;
             torch::Tensor codebook;
-            torch::Tensor composition_weights;
-            torch::Tensor composition_bias;
             torch::nn::LinearImpl* composition_layer;
            
     };
