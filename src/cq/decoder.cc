@@ -67,10 +67,6 @@ namespace lh{
         unordered_map<int, unordered_map<string, vector<vector<int>>>> fetched_codes = query_processor_->getCodes();
         map<int, map<std::string,torch::Tensor>> query_doc_approx_emb_map;
 
-        #ifdef PRFILE_CQ
-            auto begin_3 = std::chrono::system_clock::now();
-        #endif
-
         //we loop over each query string
         for (auto&  query_doc_pairs : fetched_codes) {
             int query_id = query_doc_pairs.first;
@@ -118,11 +114,6 @@ namespace lh{
             }           
             query_doc_approx_emb_map.insert(make_pair(query_id, docId_emb_map));      
         }
-
-        #ifdef PRFILE_CQ
-            auto end_3 = std::chrono::system_clock::now();
-            std::cout<<"just decoding computation time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_3-begin_3).count())/1000 << std::endl;
-        #endif
 
         #ifdef PRFILE_CQ
             auto end = std::chrono::system_clock::now();
