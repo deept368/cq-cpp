@@ -30,7 +30,7 @@ namespace lh{
 
         public:
             // Constructor
-            CodeFetcher(string filename, int number_of_files);
+            CodeFetcher();
             ~CodeFetcher();
             unordered_map<string, vector<vector<int>>> get_codes(vector<string> document_ids);
     };
