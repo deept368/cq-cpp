@@ -67,7 +67,7 @@ namespace lh{
         unordered_map<int, unordered_map<string, vector<vector<int>>>> fetched_codes = query_processor_->getCodes();
         map<int, map<std::string,torch::Tensor>> query_doc_approx_emb_map;
 
-         #ifdef PRFILE_CQ
+        #ifdef PRFILE_CQ
             auto begin_3 = std::chrono::system_clock::now();
         #endif
 
