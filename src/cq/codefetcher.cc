@@ -23,6 +23,8 @@ namespace lh{
         total_docs = 0;
         base_filename = BASE_STORE_FILE;
         number_of_files = STORE_SIZE;
+        key_offset_store = new unordered_map<string, int>();
+        file_ptrs = new vector<ifstream *>();
         
         for (int i = 0; i < number_of_files; i++) {
             (*file_ptrs).push_back(new ifstream(base_filename + to_string(i), ios::binary));
