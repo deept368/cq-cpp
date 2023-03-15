@@ -72,7 +72,7 @@ namespace lh{
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes();
-        map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map;
+        map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map = new map<int, map<std::string,torch::Tensor>*>();
 
         //we loop over each query string
         int query_counter = 0;
