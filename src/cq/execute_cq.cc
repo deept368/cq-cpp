@@ -45,14 +45,14 @@ namespace lh{
         //open trec file
         std::ofstream trec_file("../output/results.trec");
 
-        std::vector<std::string> input_strings;
+        std::vector<std::string>* input_strings = new std::vector<std::string>();
 
         //approx document embeddings are retrieved for topK documents for each query
-        map<int, map<std::string, torch::Tensor>> query_doc_emb_approx_map = decoder_->decode();
+        map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode();
 
-        for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
+        for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
             std::string input_string = query_mapping_->getQuery(query_doc_emb_pair.first);
-            input_strings.push_back(input_string);
+            input_strings->push_back(input_string);
         }
 
 
@@ -61,47 +61,62 @@ namespace lh{
        
         std::size_t idx = 0;
         //for each query, score is computed in a sequential manner
-        for (const auto& query_doc_emb_pair : query_doc_emb_approx_map) {
+        for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
             int query_id = query_doc_emb_pair.first;
 
-            std::vector<torch::Tensor> approx_tensors;
-            for (auto& doc_emb_pairs : query_doc_emb_pair.second){
-                 approx_tensors.push_back(doc_emb_pairs.second);
+            std::vector<torch::Tensor>* approx_tensors = new std::vector<torch::Tensor>();
+            for (auto& doc_emb_pairs : *(query_doc_emb_pair.second)){
+                 approx_tensors->push_back(doc_emb_pairs.second);
             }
 
-            auto doc_emb_approx = torch::cat(approx_tensors, 0);
+            auto doc_emb_approx = torch::cat(*approx_tensors, 0);
             auto D = torch::nn::functional::normalize(doc_emb_approx,
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
 
             auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
            
             std::size_t doc_idx = 0;
-            map<std::string, float> doc_id_score_map;
+            map<std::string, float>* doc_id_score_map = new map<std::string, float>();
 
-            for (auto& doc_emb_pairs : query_doc_emb_pair.second){
+            for (auto& doc_emb_pairs : *(query_doc_emb_pair.second)){
                 std::string doc_id = doc_emb_pairs.first;
-                doc_id_score_map.insert(make_pair(doc_id, score[doc_idx].item<float>()));    
+                doc_id_score_map->insert(make_pair(doc_id, score[doc_idx].item<float>()));    
                 doc_idx++;
             }
            
 
-            vector<pair<std::string, float>> doc_id_score_vec(doc_id_score_map.begin(), doc_id_score_map.end());
-            sort(doc_id_score_vec.begin(), doc_id_score_vec.end(), compare_pairs);
+            std::vector<std::pair<std::string, float>>* doc_id_score_vec = new std::vector<std::pair<std::string, float>>(doc_id_score_map->begin(), doc_id_score_map->end());
+            std::sort(doc_id_score_vec->begin(), doc_id_score_vec->end(), compare_pairs);
             std::size_t rank = 1;
-            for (auto& doc_id_score_pair : doc_id_score_vec) {
+            for (auto& doc_id_score_pair : *doc_id_score_vec) {
                 std::string doc_id = doc_id_score_pair.first;
                 auto score = doc_id_score_pair.second;
                 const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
                 trec_file << formatted_line;
                 rank++;
             }
+            delete doc_id_score_vec;
+            delete doc_id_score_map;
+            delete approx_tensors;
             idx++;
         }
+
+        delete input_strings;
+        for (auto& kv1 : *query_doc_emb_approx_map) {
+            for (auto& kv2 : *kv1.second) {
+                kv2.second.reset();
+            }
+            kv1.second->clear();
+            delete kv1.second;
+        }
+        query_doc_emb_approx_map->clear();
+        delete query_doc_emb_approx_map;
 
         #ifdef PRFILE_CQ
             auto end = std::chrono::system_clock::now();
             std::cout<<"total execution time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
         #endif
+
     }
 }
    

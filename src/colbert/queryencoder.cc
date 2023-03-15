@@ -15,16 +15,16 @@ namespace lh{
         dimension_size_ = DIMENSION_SIZE;
         bert_compute_ = new BertCompute<T>();
 
-        torch::Tensor linear_layer_weight_tensor;
-        torch::load(linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
+        torch::Tensor* linear_layer_weight_tensor = new torch::Tensor();
+        torch::load(*linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
         linear_model_ = new torch::nn::LinearImpl(torch::nn::LinearOptions(hidden_size_, dimension_size_).bias(false));
-        linear_model_->weight = linear_layer_weight_tensor;
+        linear_model_->weight = *linear_layer_weight_tensor;
     }
 
     template<class T>
     QueryEncoder<T>::~QueryEncoder(){
-        delete bert_compute_;  
-        
+        delete bert_compute_; 
+        delete linear_model_; 
     }    
 
     /**
@@ -37,15 +37,15 @@ namespace lh{
     */
 
     template<class T>
-    torch::Tensor QueryEncoder<T>::encode(std::vector<std::string> input_strings){
+    torch::Tensor QueryEncoder<T>::encode(std::vector<std::string>* input_strings){
         
          #ifdef PRFILE_CQ
             auto begin = std::chrono::system_clock::now();
         #endif
 
         //bert embeddings are computed for all the query strings and converted to tensor
-        std::size_t batch_size = input_strings.size();
-        std::vector<T> vec_bert_output= bert_compute_->compute(input_strings, true);
+        std::size_t batch_size = input_strings->size();
+        std::vector<T>* vec_bert_output= bert_compute_->compute(input_strings, true);
         
         auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
         auto bert_output_tensor = torch::from_blob(vec_bert_output.data(),
@@ -62,6 +62,9 @@ namespace lh{
             std::cout<<"query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
         #endif
         
+        delete vec_bert_output;
+        delete[] bert_output_tensor.data_ptr<T>();
+
         return normalised_output;
     }
     

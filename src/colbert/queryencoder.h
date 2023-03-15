@@ -13,7 +13,7 @@ namespace lh{
         public:
             explicit QueryEncoder();
             ~QueryEncoder();
-            torch::Tensor encode(std::vector<std::string> input_strings);
+            torch::Tensor encode(std::vector<std::string>* input_strings);
 
         private:
             std::size_t query_maxlen;

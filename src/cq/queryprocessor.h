@@ -15,15 +15,13 @@ namespace lh{
     class QueryProcessor
     {
     private:
-        unordered_map<int, vector<string>> queryResults;
+        unordered_map<int, vector<string>*>* queryResults;
         CodeFetcher* code_fetcher;
-
-        void readQueryResults(string resultFile);
     
     public:
         QueryProcessor();
         ~QueryProcessor();
-        unordered_map<int, unordered_map<string, vector<vector<int>>>> getCodes();
+        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes();
        
     };
 }
