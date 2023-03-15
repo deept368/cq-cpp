@@ -124,10 +124,10 @@ namespace lh{
         uint64_t* position_ids = new uint64_t[curr_batch_size * query_maxlen];
         uint64_t* type_ids = new uint64_t[curr_batch_size * query_maxlen];
         for (std::size_t i = 0; i < curr_batch_size; i++){
-            tokenizer_->convert_tokens_to_ids((*input_tokens)[i], (*input_ids) + i * query_maxlen);
+            tokenizer_->convert_tokens_to_ids((*input_tokens)[i], input_ids + i * query_maxlen);
             for (int j = 0; j < query_maxlen; j++){
-                (*position_ids)[i * query_maxlen + j] = j;
-                (*type_ids)[i * query_maxlen + j] = 0;
+                position_ids[i * query_maxlen + j] = j;
+                type_ids[i * query_maxlen + j] = 0;
             }
         }
         
@@ -135,7 +135,7 @@ namespace lh{
         std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
         T* pool_output_ = new T[curr_batch_size * hidden_size_];  
         T* seq_output_= new T[size];    
-        bert_->compute(curr_batch_size, query_maxlen, (*input_ids), (*position_ids), (*type_ids), (*mask), (*seq_output_), (*pool_output_));
+        bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
         
 
         #ifdef PRFILE_CQ
@@ -146,7 +146,7 @@ namespace lh{
         
 
         //array output is converted to vector before returning 
-        vector<T>* result = convert_to_vector((*seq_output_), size);
+        vector<T>* result = convert_to_vector(seq_output_, size);
 
         delete[] mask;
         delete[] input_ids;

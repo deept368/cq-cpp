@@ -19,7 +19,7 @@ namespace lh {
     
     template<class T>
     inline std::vector<T>* convert_to_vector(T* input, std::size_t size){
-        std::vector<T>* ans;
+        std::vector<T>* ans = new std::vector<T>();
         for(std::size_t idx=0; idx<size; idx++){
             ans->push_back((T)input[idx]);
         }
@@ -33,6 +33,7 @@ namespace lh {
         for (auto vec : *input) {
             linearVector->insert(linearVector->end(), vec->begin(), vec->end());
         }
+        return linearVector;
     }
 
 

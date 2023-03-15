@@ -48,8 +48,8 @@ namespace lh{
         std::vector<T>* vec_bert_output= bert_compute_->compute(input_strings, true);
         
         auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
-        auto bert_output_tensor = torch::from_blob(vec_bert_output.data(),
-                                  {1, int(vec_bert_output.size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
+        auto bert_output_tensor = torch::from_blob(vec_bert_output->data(),
+                                  {1, int(vec_bert_output->size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
  
         //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
         auto linear_output = linear_model_->forward(bert_output_tensor);
@@ -63,8 +63,7 @@ namespace lh{
         #endif
         
         delete vec_bert_output;
-        delete[] bert_output_tensor.data_ptr<T>();
-
+    
         return normalised_output;
     }
     
