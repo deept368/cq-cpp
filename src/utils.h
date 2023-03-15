@@ -28,12 +28,13 @@ namespace lh {
 
     template<class T>
     inline std::vector<T>* linearize_vector_of_vectors(std::vector<std::vector<T>*>* input) {
-        std::vector<T>* linearVector = new std::vector<T>();
-
-        for (auto vec : *input) {
-            linearVector->insert(linearVector->end(), vec->begin(), vec->end());
+       std::vector<T>* ans = new std::vector<T>();
+        for (const auto& v : *input) {
+            for (auto& d : *v) {
+                ans->push_back(d);
+            }
         }
-        return linearVector;
+        return ans; 
     }
 
 
