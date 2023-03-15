@@ -100,8 +100,8 @@ namespace lh{
                 //compute the approx embeddings for the document using the codes and codebook
                 auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
                 auto options_int = torch::TensorOptions().dtype(torch::kInt);
-                auto codes = torch::from_blob(linear_codes_vec->data(),
-                                  {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)codes_vec[0].size()});
+                aauto codes = torch::from_blob(linear_codes_vec->data(),
+                                  {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)(*codes_vec)[0]->size()});
                 auto code_sparse = torch::zeros({codes.size(0), (std::int64_t)M_, (std::int64_t)K_}, torch::kFloat);
                 auto indices = codes.unsqueeze(2).to(torch::kLong);
                 code_sparse.scatter_(-1, indices, 1.0);
