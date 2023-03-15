@@ -21,7 +21,7 @@ namespace lh
 
     unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* QueryProcessor::getCodes(){
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* result = new unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>();
-        unordered_map<string, vector<vector<int>*>*>* internal_map;
+        unordered_map<string, vector<vector<int>*>*>* internal_map =  new unordered_map<string, vector<vector<int>*>*>();
 
          vector<vector<int>*>* doc0_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc0_values.txt");
          vector<vector<int>*>* doc1_vec = get_vec_of_vecs_from_file("/home/deept/cq-cpp/test/doc1_values.txt");
@@ -30,7 +30,10 @@ namespace lh
          internal_map->insert(make_pair("doc1", doc1_vec));
 
          result->insert(make_pair(12345, internal_map));
-
+        cout<<"map size "<<result->size()<<endl;
+        cout<<"inside "<<(*result)[12345]->size()<<endl;
+        cout<<(*((*(*((*result)[12345]))["doc0"]))[2])[3]<<endl;
+        
          return result;
     }
 

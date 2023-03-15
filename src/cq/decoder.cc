@@ -62,7 +62,7 @@ namespace lh{
     */
 
      map<int, map<std::string,torch::Tensor>*>* Decoder::decode(){
-
+        cout<<"reached here "<<endl;
         #ifdef PRFILE_CQ
             auto begin = std::chrono::system_clock::now();
         #endif
@@ -72,7 +72,8 @@ namespace lh{
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes();
-        map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map;
+        
+        map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map = new map<int, map<std::string,torch::Tensor>*>();
 
         //we loop over each query string
         int query_counter = 0;
@@ -96,19 +97,20 @@ namespace lh{
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
                 auto token_tensor = torch::from_blob(tokens->data(), {(std::int64_t)tokens->size()}, torch::kInt);
                 auto static_embs = non_contextual_embedding->forward(token_tensor);
+
                 
                 //compute the approx embeddings for the document using the codes and codebook
                 auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
+               
                 auto options_int = torch::TensorOptions().dtype(torch::kInt);
                 auto codes = torch::from_blob(linear_codes_vec->data(),
-                                  {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)codes_vec[0].size()});
+                                  {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)(*codes_vec)[0]->size()});
                 auto code_sparse = torch::zeros({codes.size(0), (std::int64_t)M_, (std::int64_t)K_}, torch::kFloat);
                 auto indices = codes.unsqueeze(2).to(torch::kLong);
                 code_sparse.scatter_(-1, indices, 1.0);
                 
                 auto decoded = torch::matmul(*codebook, code_sparse.unsqueeze(-1)).squeeze(-1);
                 auto codeapprox = decoded.reshape({decoded.size(0), (std::int64_t)M_*(std::int64_t)codebook_dim_});
-                
 
                 //static_embs and approx_codes are concatenated
                 auto cat_res = torch::cat({codeapprox, static_embs}, 1);
@@ -116,15 +118,20 @@ namespace lh{
                 //composition layer is applied to get one final approx decoded embeddings for document
                 auto composition_result = composition_layer->forward(cat_res);
                 composition_result = composition_result.unsqueeze(0);
+
+                cout<<composition_result[0][0][0]<<endl;
                 
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
                 torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
                 full_tensor.slice(1, 0, tokens->size()) = composition_result;
-                docId_emb_map->insert(make_pair(doc_id, full_tensor));
 
+                docId_emb_map->insert(make_pair(doc_id, full_tensor));
+                
                 delete tokens;
-            }           
+            }       
+            cout<<"reched beor "<<endl;    
             query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));      
+            cout<<"returned from hree "<<endl;
         }
 
         #ifdef PRFILE_CQ
