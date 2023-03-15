@@ -65,21 +65,21 @@ namespace lh {
         return ans;
     }
 
-    inline std::vector<std::vector<int>>* get_vec_of_vecs_from_file(std::string file_path){
+    inline std::vector<std::vector<int>*>* get_vec_of_vecs_from_file(std::string file_path){
         ifstream file(file_path);
 
-        vector<vector<int>>* vec;
+        vector<vector<int>*>* vec = new  vector<vector<int>*>();
 
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
             int num;
 
-            vector<int>* innerVec;
+            vector<int>* innerVec = new vector<int>();
             while (ss >> num) {
                 innerVec->push_back(num);
             }
-            vec->push_back(*innerVec);
+            vec->push_back(innerVec);
         }
         return vec;
     }

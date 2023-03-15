@@ -11,8 +11,7 @@ namespace lh{
             string getQuery(int queryId);
             
         private:
-            unordered_map<int, string>* queryMapping;
-            void readQueryMapping(string queryFile);
+        
 
     };
 }
