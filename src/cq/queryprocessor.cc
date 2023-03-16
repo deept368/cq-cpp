@@ -10,7 +10,8 @@ namespace lh
 {
 
     QueryProcessor::QueryProcessor(){
-        unordered_map<int, vector<string>*>* queryResults = new unordered_map<int, vector<string>*>();
+        code_fetcher = new CodeFetcher();
+        queryResults = new unordered_map<int, vector<string>*>();
         ifstream file(RESULTS_FILE);
         if (!file) {
             cerr << "Error opening result file: " << RESULTS_FILE << endl;
@@ -31,8 +32,6 @@ namespace lh
 
         file.close();
         cout << "Loading query results completed." << endl;
-
-        code_fetcher = new CodeFetcher();
     }
 
     QueryProcessor::~QueryProcessor(){
