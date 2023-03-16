@@ -68,7 +68,6 @@ namespace lh{
                 input_strings->push_back(input_string);
             }
 
-            cout<<"input stirng size "<<input_strings->size()<<endl;
             //query input_strings are encoded
 
               #ifdef PRFILE_CQ
@@ -86,6 +85,11 @@ namespace lh{
             cout<<"encoded"<<endl;
 
             std::size_t idx = 0;
+
+            #ifdef PRFILE_CQ
+                auto begin_scoring = std::chrono::system_clock::now();
+            #endif
+
             //for each query, score is computed in a sequential manner
             for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
                 int query_id = query_doc_emb_pair.first;
@@ -99,17 +103,9 @@ namespace lh{
                 auto D = torch::nn::functional::normalize(doc_emb_approx,
                                     torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
 
-                  #ifdef PRFILE_CQ
-                    auto begin_scoring = std::chrono::system_clock::now();
-                #endif
-
+                
                 auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
 
-                #ifdef PRFILE_CQ
-                    auto end_scoring = std::chrono::system_clock::now();
-                    std::cout<<"total scoring time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_scoring-begin_scoring).count())/1000 << std::endl;
-                #endif
-            
                 std::size_t doc_idx = 0;
                 map<std::string, float>* doc_id_score_map = new map<std::string, float>();
 
@@ -136,6 +132,11 @@ namespace lh{
                 idx++;
             }
 
+            #ifdef PRFILE_CQ
+                auto end_scoring = std::chrono::system_clock::now();
+                std::cout<<"total scoring time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_scoring-begin_scoring).count())/1000 << std::endl;
+            #endif
+
             delete input_strings;
             for (auto& kv1 : *query_doc_emb_approx_map) {
                 for (auto& kv2 : *kv1.second) {
@@ -146,9 +147,6 @@ namespace lh{
             }
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
-
-          
-
             offset+=BATCH_SIZE;
         }
 
