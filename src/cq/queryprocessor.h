@@ -12,8 +12,7 @@ using namespace std;
 
 namespace lh{
     
-    class QueryProcessor
-    {
+    class QueryProcessor{
     private:
         unordered_map<int, vector<string>*>* queryResults;
         CodeFetcher* code_fetcher;
@@ -22,7 +21,6 @@ namespace lh{
         QueryProcessor();
         ~QueryProcessor();
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes();
-       
     };
 }
 
