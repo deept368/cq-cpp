@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "../config.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -53,13 +54,18 @@ namespace lh
         std::advance(it, offset);
         cout<<"offset is "<<offset<<endl;
 
+         #pragma omp parallel for
         for (int i = 0; i < batch_size && it != queryResults->end(); ++i, ++it) {
             int query_id = it->first;
 
             cout << "Now processing for query: " << query_id << " " << i << endl;
 
             unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(it->second);
-            code_map->insert(make_pair(query_id, codes));
+
+             #pragma omp critical
+             {
+                code_map->insert(make_pair(query_id, codes));
+             }
         }
        
         return code_map;

@@ -14,6 +14,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include "../config.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -79,6 +80,7 @@ namespace lh{
         // read document data
         unordered_map<string, vector<vector<int>*>*>* doc_data_map = new unordered_map<string, vector<vector<int>*>*>();
 
+        #pragma omp parallel for
         for (auto& doc_id : *document_ids){
             int file_idx = stoi(doc_id) % 256;
             int bit_offset = key_offset_store->at(doc_id);
@@ -99,7 +101,10 @@ namespace lh{
                 }
                 doc_data->push_back(token_data);
             }
-            doc_data_map->insert(make_pair(doc_id, doc_data));
+            #pragma omp critical
+            {
+                doc_data_map->insert(make_pair(doc_id, doc_data));
+            }
         }
         return doc_data_map;
     }
