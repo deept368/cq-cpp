@@ -76,12 +76,14 @@ namespace lh{
 
         //we loop over each query string
         int query_counter = 0;
+        #pragma omp parallel for
         for (auto&  query_doc_pairs : *fetched_codes) {
             int query_id = query_doc_pairs.first;
             cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
             unordered_map<string, vector<vector<int>*>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
             //we loop over a single document for all the topK documents for one query string
+            #pragma omp parallel for
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
                 cout << "Processing for document id: " << doc_id << endl;
@@ -120,11 +122,18 @@ namespace lh{
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
                 torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
                 full_tensor.slice(1, 0, tokens->size()) = composition_result;
-                docId_emb_map->insert(make_pair(doc_id, full_tensor));
 
+                #pragma omp critical
+                {
+                    docId_emb_map->insert(make_pair(doc_id, full_tensor));
+                }
                 delete tokens;
             }           
-            query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));      
+
+            #pragma omp critical
+            {
+                query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));  
+            }    
         }
 
         #ifdef PRFILE_CQ

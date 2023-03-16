@@ -61,6 +61,7 @@ namespace lh{
        
         std::size_t idx = 0;
         //for each query, score is computed in a sequential manner
+        #pragma omp parallel for
         for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
             int query_id = query_doc_emb_pair.first;
 
@@ -92,7 +93,10 @@ namespace lh{
                 std::string doc_id = doc_id_score_pair.first;
                 auto score = doc_id_score_pair.second;
                 const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
-                trec_file << formatted_line;
+                #pragma omp critical
+                {
+                    trec_file << formatted_line;
+                }
                 rank++;
             }
             delete doc_id_score_vec;
