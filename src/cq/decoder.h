@@ -1,7 +1,6 @@
 #include <torch/torch.h>
 #include "../config.h"
 #include "../utils.h"
-#include "queryprocessor.h"
 #include <map>
 #include <vector>
 
@@ -14,10 +13,9 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<int, map<std::string,torch::Tensor>*>* decode(int offset);
+            map<int, map<std::string,torch::Tensor>*>* decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes);
             
         private:
-            QueryProcessor* query_processor_;
             std::int64_t vocab_size_;
             std::int64_t dimension_size_;
             std::int64_t pad_token_id_;

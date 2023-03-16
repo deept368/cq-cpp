@@ -1,4 +1,5 @@
 #include <torch/torch.h>
+#include "queryprocessor.h"
 #include "../colbert/queryencoder.h"
 #include "../colbert/score.h"
 #include "querymapping.h"
@@ -24,6 +25,6 @@ namespace lh{
             QueryEncoder<float>* query_encoder_;
             Score* score_;
             QueryMapping* query_mapping_;
-
+            QueryProcessor* query_processor_;
     };
 }

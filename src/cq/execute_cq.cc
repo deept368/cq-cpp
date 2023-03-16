@@ -13,6 +13,7 @@ namespace lh{
        query_encoder_ = new QueryEncoder<float>();
        score_ = new Score();
        query_mapping_ = new QueryMapping();
+       query_processor_ = new QueryProcessor();
     }
 
   
@@ -21,6 +22,7 @@ namespace lh{
        delete query_encoder_;
        delete score_;
        delete query_mapping_;
+       delete query_processor_;
     }    
 
     bool compare_pairs(const pair<string, float>& p1, const pair<string, float>& p2) {
@@ -48,23 +50,27 @@ namespace lh{
 
         int offset = 0;
 
-        while(offset <= 6980){
+        while(offset <= 1){
+
+            unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
+            
             std::vector<std::string>* input_strings = new std::vector<std::string>();
             
-            //approx document embeddings are retrieved for topK documents for each query
+            
               #ifdef PRFILE_CQ
                 auto begin_decoding = std::chrono::system_clock::now();
             #endif
 
-            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(offset);
+            //approx document embeddings are retrieved for topK documents for each query
+            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
 
             #ifdef PRFILE_CQ
                 auto end_decoding = std::chrono::system_clock::now();
-                std::cout<<"total decoding time including fetching in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
+                std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
             #endif
 
-            for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
-                std::string input_string = query_mapping_->getQuery(query_doc_emb_pair.first);
+            for (const auto& query_doc_codes_pair : *fetched_codes) {
+                std::string input_string = query_mapping_->getQuery(query_doc_codes_pair.first);
                 input_strings->push_back(input_string);
             }
 
@@ -74,8 +80,9 @@ namespace lh{
                 auto being_encoding = std::chrono::system_clock::now();
                 
               #endif
-
+                    cout<<input_strings->size()<<endl;
                     auto Q_all = query_encoder_->encode(input_strings);
+                    cout<<Q_all.sizes();
 
               #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
@@ -93,7 +100,7 @@ namespace lh{
             //for each query, score is computed in a sequential manner
             for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
                 int query_id = query_doc_emb_pair.first;
-
+              
                 std::vector<torch::Tensor>* approx_tensors = new std::vector<torch::Tensor>();
                 for (auto& doc_emb_pairs : *(query_doc_emb_pair.second)){
                     approx_tensors->push_back(doc_emb_pairs.second);
@@ -114,7 +121,7 @@ namespace lh{
                     doc_id_score_map->insert(make_pair(doc_id, score[doc_idx].item<float>()));    
                     doc_idx++;
                 }
-            
+
 
                 std::vector<std::pair<std::string, float>>* doc_id_score_vec = new std::vector<std::pair<std::string, float>>(doc_id_score_map->begin(), doc_id_score_map->end());
                 std::sort(doc_id_score_vec->begin(), doc_id_score_vec->end(), compare_pairs);
@@ -123,6 +130,7 @@ namespace lh{
                     std::string doc_id = doc_id_score_pair.first;
                     auto score = doc_id_score_pair.second;
                     const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
+                   
                     trec_file << formatted_line;
                     rank++;
                 }
@@ -145,9 +153,22 @@ namespace lh{
                 kv1.second->clear();
                 delete kv1.second;
             }
+
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
             offset+=BATCH_SIZE;
+
+            for (auto& kv1 : *fetched_codes) {
+                for (auto& kv2 : *kv1.second) {
+                    for (auto* ptr : *kv2.second) {
+                        delete ptr;
+                    }
+                    delete kv2.second;
+                }
+                delete kv1.second;
+            }
+
+            delete fetched_codes;
         }
 
           #ifdef PRFILE_CQ
