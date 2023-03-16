@@ -32,7 +32,7 @@ namespace lh{
         google::protobuf::ShutdownProtobufLibrary();
         std::cout << "Successfully loaded parameters from protobuf!" << std::endl;
 
-        size_t pre_batch_size = BATCH_SIZE;
+        size_t pre_batch_size = PRE_BATCH_SIZE;
         size_t pre_seq_len = 512;
         size_t num_heads = 12;
         size_t head_hidden_size = 64;

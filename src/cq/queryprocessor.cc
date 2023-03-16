@@ -47,7 +47,7 @@ namespace lh
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* code_map = new unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>();
        
 
-        int batch_size = BATCH_SIZE;
+        int batch_size = PRE_BATCH_SIZE;
 
         auto it = queryResults->begin();
         std::advance(it, offset);

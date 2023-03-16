@@ -22,6 +22,6 @@
 #define BASE_STORE_FILE "../data/output_result/result_"
 #define STORE_SIZE 256
 
-#define BATCH_SIZE 500
+#define PRE_BATCH_SIZE 1
 
 #endif

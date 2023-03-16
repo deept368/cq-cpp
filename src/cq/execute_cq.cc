@@ -80,9 +80,9 @@ namespace lh{
                 auto being_encoding = std::chrono::system_clock::now();
                 
               #endif
-                    cout<<input_strings->size()<<endl;
-                    auto Q_all = query_encoder_->encode(input_strings);
-                    cout<<Q_all.sizes();
+                   
+                auto Q_all = query_encoder_->encode(input_strings);
+                    
 
               #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
@@ -156,8 +156,6 @@ namespace lh{
 
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
-            offset+=BATCH_SIZE;
-
             for (auto& kv1 : *fetched_codes) {
                 for (auto& kv2 : *kv1.second) {
                     for (auto* ptr : *kv2.second) {
@@ -169,6 +167,7 @@ namespace lh{
             }
 
             delete fetched_codes;
+            offset+=PRE_BATCH_SIZE;
         }
 
           #ifdef PRFILE_CQ
