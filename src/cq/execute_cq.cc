@@ -50,14 +50,20 @@ namespace lh{
 
         int offset = 0;
 
-        while(offset <= 1){
+        while(offset <= 6980){
+
+             #ifdef PRFILE_CQ
+                auto begin_fetch = std::chrono::system_clock::now();
+            #endif
 
             unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
-            std::vector<std::string>* input_strings = new std::vector<std::string>();
-            
-            
-              #ifdef PRFILE_CQ
+             #ifdef PRFILE_CQ
+                auto end_fetch = std::chrono::system_clock::now();
+                std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
+            #endif
+
+            #ifdef PRFILE_CQ
                 auto begin_decoding = std::chrono::system_clock::now();
             #endif
 
@@ -69,6 +75,8 @@ namespace lh{
                 std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
             #endif
 
+            std::vector<std::string>* input_strings = new std::vector<std::string>();
+            
             for (const auto& query_doc_codes_pair : *fetched_codes) {
                 std::string input_string = query_mapping_->getQuery(query_doc_codes_pair.first);
                 input_strings->push_back(input_string);
@@ -77,17 +85,15 @@ namespace lh{
             //query input_strings are encoded
 
               #ifdef PRFILE_CQ
-                auto being_encoding = std::chrono::system_clock::now();
-                
+                auto begin_encoding = std::chrono::system_clock::now();
               #endif
                    
                 auto Q_all = query_encoder_->encode(input_strings);
                     
-
               #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
-                std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-being_encoding).count())/1000 << std::endl;
-                #endif
+                std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000 << std::endl;
+              #endif
 
             cout<<"encoded"<<endl;
 
