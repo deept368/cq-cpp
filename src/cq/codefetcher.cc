@@ -14,7 +14,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include "../config.h"
-#include <thread>
+#include <omp.h>
 
 using namespace std;
 
@@ -80,39 +80,8 @@ namespace lh{
         // read document data
         unordered_map<string, vector<vector<int>*>*>* doc_data_map = new unordered_map<string, vector<vector<int>*>*>();
 
-        vector<thread*>* threads = new vector<thread*>();
-        vector<unordered_map<string, vector<vector<int>*>*>*>* results = new vector<unordered_map<string, vector<vector<int>*>*>*>();
-
-        int num_threads = min(static_cast<int>(document_ids->size()), static_cast<int>(thread::hardware_concurrency()));
-
-        for (int i = 0; i < num_threads; i++) {
-            unordered_map<string, vector<vector<int>*>*>* doc_data_partial = new unordered_map<string, vector<vector<int>*>*>();
-            threads->emplace_back(new thread(&CodeFetcher::get_codes_partial, this, document_ids, i, num_threads, doc_data_partial));
-            results->push_back(doc_data_partial);
-        }
-
-        for (auto& t : *threads) {
-            t->join();
-            delete t;
-        }
-
-        for (auto& r : *results) {
-            for (auto& p : *r) {
-                doc_data_map->insert(p);
-            }
-            delete r;
-        }
-
-        threads->clear();
-        // Delete the vector itself
-        delete threads;
-
-        return doc_data_map;
-    }
-
-    void CodeFetcher::get_codes_partial(vector<string>* document_ids, int start_idx, int step_size, unordered_map<string, vector<vector<int>*>*>* doc_data_partial) {
-        for (int i = start_idx; i < document_ids->size(); i += step_size) {
-            auto& doc_id = (*document_ids)[i];
+        #pragma omp parallel for
+        for (auto& doc_id : *document_ids){
             int file_idx = stoi(doc_id) % 256;
             int bit_offset = key_offset_store->at(doc_id);
             ifstream &file = *(*file_ptrs)[file_idx];
@@ -132,7 +101,11 @@ namespace lh{
                 }
                 doc_data->push_back(token_data);
             }
-            doc_data_partial->insert(make_pair(doc_id, doc_data));
+            #pragma omp critical
+            {
+                doc_data_map->insert(make_pair(doc_id, doc_data));
+            }
         }
+        return doc_data_map;
     }
 }

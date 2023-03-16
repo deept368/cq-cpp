@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <thread>
 #include "../config.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -42,37 +42,27 @@ namespace lh
         }
         delete queryResults;
     }   
-
-    void process_query(int query_id, vector<string>* docs, CodeFetcher* code_fetcher, unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* code_map){
-        cout << "Now processing for query: " << query_id << endl;
-
-        unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(docs);
-        code_map->insert(make_pair(query_id, codes));
-
-        cout << "CodeMap size is " << code_map->size() << endl;
-    }
+    
 
     unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* QueryProcessor::getCodes(){
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* code_map = new unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>();
-        vector<thread*>* threads = new vector<thread*>();
         int c=1;
+
+        #pragma omp parallel for
         for (const auto &queryDocMap : *queryResults) {
             int query_id = queryDocMap.first;
-            vector<string>* docs = queryDocMap.second;
 
-            threads->push_back(new thread(process_query, query_id, docs, code_fetcher, code_map));
+            cout << "Now processing for query: " << query_id << " " << c++ << endl;
 
-            c++;
+            unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(queryDocMap.second);
+
+            #pragma omp critical
+            {
+                code_map->insert(make_pair(query_id, codes));
+                cout << "CodeMap size is " << code_map->size() << endl;
+            }
         }
 
-        for (auto& thread : *threads) {
-            thread->join();
-            delete thread;
-        }
-
-        threads->clear();
-        // Delete the vector itself
-        delete threads;
         cout<<"returning codes"<<endl;
         return code_map;
     }

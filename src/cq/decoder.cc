@@ -4,6 +4,7 @@
 #include <torch/script.h>
 #include<iostream>
 #include<unordered_map>
+#include <omp.h>
 
 using namespace std;
 

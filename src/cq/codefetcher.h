@@ -19,7 +19,6 @@ namespace lh{
             int number_of_files;
             vector<ifstream *>* file_ptrs;
             unordered_map<string, int>* key_offset_store;
-            void get_codes_partial(vector<string>* document_ids, int start_idx, int step_size, unordered_map<string, vector<vector<int>*>*>* doc_data_partial);
             int total_docs;
     
         public:
