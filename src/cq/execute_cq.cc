@@ -131,7 +131,7 @@ namespace lh{
 
                 std::vector<std::pair<std::string, float>>* doc_id_score_vec = new std::vector<std::pair<std::string, float>>(doc_id_score_map->begin(), doc_id_score_map->end());
                 std::sort(doc_id_score_vec->begin(), doc_id_score_vec->end(), compare_pairs);
-                std::size_t rank = 1;
+                std::size_t rank = 0;
                 for (auto& doc_id_score_pair : *doc_id_score_vec) {
                     std::string doc_id = doc_id_score_pair.first;
                     auto score = doc_id_score_pair.second;
