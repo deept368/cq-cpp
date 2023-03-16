@@ -39,10 +39,6 @@ namespace lh{
     template<class T>
     torch::Tensor QueryEncoder<T>::encode(std::vector<std::string>* input_strings){
         
-         #ifdef PRFILE_CQ
-            auto begin = std::chrono::system_clock::now();
-        #endif
-
         //bert embeddings are computed for all the query strings and converted to tensor
         std::size_t batch_size = input_strings->size();
         std::vector<T>* vec_bert_output= bert_compute_->compute(input_strings, true);
@@ -57,11 +53,7 @@ namespace lh{
         //finally, linear_ouptut is normalised and returned
         auto normalised_output = torch::nn::functional::normalize(linear_output,
                                  torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
-         #ifdef PRFILE_CQ
-            auto end = std::chrono::system_clock::now();
-            std::cout<<"query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
-        #endif
-        
+                                 
         delete vec_bert_output;
     
         return normalised_output;

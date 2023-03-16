@@ -21,7 +21,7 @@ namespace lh{
     public:
         QueryProcessor();
         ~QueryProcessor();
-        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes();
+        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes(int offset);
        
     };
 }

@@ -61,17 +61,24 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(){
-
-        #ifdef PRFILE_CQ
-            auto begin = std::chrono::system_clock::now();
-        #endif
-        
+     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(int offset){
+   
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
-        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes();
+
+        #ifdef PRFILE_CQ
+                auto begin_fetch = std::chrono::system_clock::now();
+         #endif
+
+        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
+
+        #ifdef PRFILE_CQ
+                auto end_fetch = std::chrono::system_clock::now();
+                std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
+         #endif
+
         map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map = new map<int, map<std::string,torch::Tensor>*>();
 
         //we loop over each query string
@@ -84,7 +91,6 @@ namespace lh{
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
-                cout << "Processing for document id: " << doc_id << endl;
                 vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
                 vector<int>* tokens = new vector<int>();
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
@@ -126,11 +132,6 @@ namespace lh{
             }           
             query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));      
         }
-
-        #ifdef PRFILE_CQ
-            auto end = std::chrono::system_clock::now();
-            std::cout<<"total document decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
-        #endif
 
         for (auto& kv1 : *fetched_codes) {
             for (auto& kv2 : *kv1.second) {

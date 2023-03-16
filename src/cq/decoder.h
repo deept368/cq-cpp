@@ -14,7 +14,7 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<int, map<std::string,torch::Tensor>*>* decode();
+            map<int, map<std::string,torch::Tensor>*>* decode(int offset);
             
         private:
             QueryProcessor* query_processor_;

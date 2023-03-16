@@ -28,18 +28,9 @@ namespace lh{
     */
 
     torch::Tensor Score::compute_scores(torch::Tensor Q, torch::Tensor D){
-        
-        #ifdef PRFILE_CQ
-            auto begin = std::chrono::system_clock::now();
-        #endif
-        
+         
         auto scores = std::get<0>(Q.matmul(D.permute({0, 2, 1})).max(2)).sum(1);   
-        
-        #ifdef PRFILE_CQ
-        auto end = std::chrono::system_clock::now();
-        std::cout<<"scoring time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
-        #endif
-
+       
         return scores;
     }
 
