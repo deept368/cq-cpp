@@ -4,6 +4,7 @@
 #include<chrono>
 #include<iostream>
 #include<thread>
+#include<future>
 
 using namespace std;
 
@@ -52,62 +53,79 @@ namespace lh{
         int offset = 0;
         while(offset <= 1){
 
-             #ifdef PRFILE_CQ
+            #ifdef PRFILE_CQ
                 auto begin_fetch = std::chrono::system_clock::now();
             #endif
 
             unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
-            
+
             #ifdef PRFILE_CQ
                 auto end_fetch = std::chrono::system_clock::now();
                 std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
             #endif
 
-                        
-              #ifdef PRFILE_CQ
-                auto begin_decoding = std::chrono::system_clock::now();
-            #endif
-            //approx document embeddings are retrieved for topK documents for each query
-            std::thread decoder_thread([&](){
-                return decoder_->decode(fetched_codes);
-            });
 
            
-            #ifdef PRFILE_CQ
-                auto end_decoding = std::chrono::system_clock::now();
-                std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
-            #endif
+
+            // Create a promise and a future to hold the result of the decoder
+            std::promise<map<int, map<std::string, torch::Tensor>*>*> decoder_promise;
+            std::future<map<int, map<std::string, torch::Tensor>*>*> decoder_future = decoder_promise.get_future();
+
+            // Create a thread to run the decoder in the background
+            std::thread decoder_thread([fetched_codes, &decoder_promise, this](){
+                // Call the decoder function and set the result in the promise
+                 #ifdef PRFILE_CQ
+                    auto begin_decoding = std::chrono::system_clock::now();
+                #endif
+                map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
+
+                #ifdef PRFILE_CQ
+                    auto end_decoding = std::chrono::system_clock::now();
+                    std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
+                #endif
+
+                decoder_promise.set_value(query_doc_emb_approx_map);
+            });
 
             std::vector<std::string>* input_strings = new std::vector<std::string>();
+
             for (const auto& query_doc_codes_pair : *fetched_codes) {
                 std::string input_string = query_mapping_->getQuery(query_doc_codes_pair.first);
                 input_strings->push_back(input_string);
             }
 
-            //query input_strings are encoded
+            // Create a promise and a future to hold the result of the query encoder
+            std::promise<torch::Tensor> query_encoder_promise;
+            std::future<torch::Tensor> query_encoder_future = query_encoder_promise.get_future();
 
-              #ifdef PRFILE_CQ
-                auto being_encoding = std::chrono::system_clock::now();
-              #endif
-            
-            std::thread encoder_thread([&](){
-                 return query_encoder_->encode(input_strings);
+            // Create a thread to run the query encoder in the background
+            std::thread query_encoder_thread([input_strings, &query_encoder_promise, this](){
+                // Call the query encoder function and set the result in the promise
+
+                #ifdef PRFILE_CQ
+                    auto begin_encoding = std::chrono::system_clock::now();
+                #endif
+
+                torch::Tensor Q_all = query_encoder_->encode(input_strings);
+
+                 #ifdef PRFILE_CQ
+                    auto end_encoding = std::chrono::system_clock::now();
+                    std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000 << std::endl;
+                #endif
+
+                query_encoder_promise.set_value(Q_all);
             });
 
-        
-            #ifdef PRFILE_CQ
-                auto end_encoding = std::chrono::system_clock::now();
-                std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-being_encoding).count())/1000 << std::endl;
-            #endif
 
-            encoder_thread.join();
+            // Wait for the decoder thread to finish and get the result from the future
+            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_future.get();
+
+            // Wait for the query encoder thread to finish and get the result from the future
+            torch::Tensor Q_all = query_encoder_future.get();
+
+            // Join the decoder and query encoder threads with the main thread
             decoder_thread.join();
-
-            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_thread.get();
-            auto Q_all = encoder_thread.get();
-
-            cout<<"Q size "<<Q_all.sizes()<<endl;
-            cout<<"Map sze "<<(*query_doc_emb_approx_map).size()<<endl;
+            query_encoder_thread.join();
 
 
             cout<<"encoded"<<endl;
