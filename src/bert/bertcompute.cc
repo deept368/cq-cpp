@@ -91,40 +91,37 @@ namespace lh{
      @return linear a vector containing the BERT embeddings of the input strings of size (BATCH_SIZE * QUERY_MAXLEN * HIDDEN_DIM_SIZE(768)) 
     */
     template<class T>
-    std::vector<T> BertCompute<T>::compute(std::vector<std::string> input_string, bool isQuery){
+    std::vector<T>* BertCompute<T>::compute(std::vector<std::string>* input_string, bool isQuery){
         
-        #ifdef PRFILE_CQ
-            auto begin = std::chrono::system_clock::now();
-        #endif
         //computing the batch size
-        int curr_batch_size = input_string.size();
+        int curr_batch_size = input_string->size();
 
         //necessary tokens are added and the input strings are converted to tokens
-        std::vector<std::vector<std::string>> input_tokens(curr_batch_size);
+        std::vector<std::vector<std::string>>* input_tokens = new std::vector<std::vector<std::string>>(curr_batch_size);
         for (std::size_t i = 0; i < curr_batch_size; i++){
-            tokenizer_->tokenize(input_string[i].c_str(), &input_tokens[i], query_maxlen);
+            tokenizer_->tokenize((*input_string)[i].c_str(), &(*input_tokens)[i], query_maxlen);
             if(isQuery){
-                input_tokens[i].insert(input_tokens[i].begin(), "[unused0]");
+                (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[unused0]");
             }
-            input_tokens[i].insert(input_tokens[i].begin(), "[CLS]");    
-            input_tokens[i].push_back("[SEP]");
+            (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[CLS]");    
+            (*input_tokens)[i].push_back("[SEP]");
         }
 
         //mask is computed and padding is applied to input strings
-        uint64_t mask[curr_batch_size];
+        uint64_t* mask = new uint64_t[curr_batch_size];
         for (std::size_t i = 0; i < curr_batch_size; i++){
-            mask[i] = input_tokens[i].size();
-            for (int j = input_tokens[i].size(); j < query_maxlen; j++){
-                input_tokens[i].push_back("[MASK]");
+            mask[i] = (*input_tokens)[i].size();
+            for (int j = (*input_tokens)[i].size(); j < query_maxlen; j++){
+                (*input_tokens)[i].push_back("[MASK]");
             }
         }
 
         //token ids are computed using tokens. vocab.txt is used for the same.
-        uint64_t input_ids[curr_batch_size * query_maxlen];
-        uint64_t position_ids[curr_batch_size * query_maxlen];
-        uint64_t type_ids[curr_batch_size * query_maxlen];
+        uint64_t* input_ids = new uint64_t[curr_batch_size * query_maxlen];
+        uint64_t* position_ids = new uint64_t[curr_batch_size * query_maxlen];
+        uint64_t* type_ids = new uint64_t[curr_batch_size * query_maxlen];
         for (std::size_t i = 0; i < curr_batch_size; i++){
-            tokenizer_->convert_tokens_to_ids(input_tokens[i], input_ids + i * query_maxlen);
+            tokenizer_->convert_tokens_to_ids((*input_tokens)[i], input_ids + i * query_maxlen);
             for (int j = 0; j < query_maxlen; j++){
                 position_ids[i * query_maxlen + j] = j;
                 type_ids[i * query_maxlen + j] = 0;
@@ -133,20 +130,23 @@ namespace lh{
         
         //bert compute is called to generate the embeddings. output is stored in 1-d array seq_output, size: batch_size*query_maxlen*768(hidden_dim)
         std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
-        T pool_output_[curr_batch_size * hidden_size_];  
-        T seq_output_[size];    
+        T* pool_output_ = new T[curr_batch_size * hidden_size_];  
+        T* seq_output_= new T[size];    
         bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
         
-
-        #ifdef PRFILE_CQ
-            auto end = std::chrono::system_clock::now();
-            std::cout<<"bert compute time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
-        #endif
-
         //array output is converted to vector before returning 
-        return convert_to_vector(seq_output_, size);
-        
+        vector<T>* result = convert_to_vector(seq_output_, size);
 
+        delete[] mask;
+        delete[] input_ids;
+        delete[] position_ids;
+        delete[] type_ids;
+        delete[] seq_output_;
+        delete[] pool_output_;
+        delete input_tokens;
+
+        return result;
+        
     }
     template class BertCompute<float>;
 }

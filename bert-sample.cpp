@@ -14,6 +14,7 @@ int main(){
 
     ExecuteCQ cq;
     cq.execute();
+    
 
     #ifdef PRFILE_CQ
         auto end = std::chrono::system_clock::now();

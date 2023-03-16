@@ -10,18 +10,10 @@ namespace lh
 {
 
     QueryMapping::QueryMapping(){
-        readQueryMapping(QUERY_FILE);
-    }
-
-    QueryMapping::~QueryMapping(){
-    }   
-    
-   
-
-    void QueryMapping::readQueryMapping(string queryFile){
-        ifstream file(queryFile);
+        queryMapping = new unordered_map<int, string>;
+        ifstream file(QUERY_FILE);
         if (!file) {
-            cerr << "Error opening query file: " << queryFile << endl;
+            cerr << "Error opening query file: " << QUERY_FILE << endl;
             return;
         }
 
@@ -36,17 +28,21 @@ namespace lh
             query = line.substr(start);
             
            
-            queryMapping.insert(make_pair(stoi(queryId), query));
+            queryMapping->insert(make_pair(stoi(queryId), query));
         }
         file.close();
         cout << "Loading query mapping completed." << endl;
     }
 
+    QueryMapping::~QueryMapping(){
+        delete queryMapping;
+    }   
+    
     string QueryMapping::getQuery(int queryId){
-        if (queryMapping.find(queryId) == queryMapping.end()) {
+        if (queryMapping->find(queryId) == queryMapping->end()) {
             cerr << "Query ID " << queryId << " not found." << endl;
             return "";
         }
-        return queryMapping[queryId];
+        return (*queryMapping)[queryId];
     }
 };

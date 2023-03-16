@@ -16,23 +16,16 @@ namespace lh{
     {
         private:
             string base_filename;
-            int M, K, num_docs = 0, key_bytes, offset_bytes, token_bytes;
             int number_of_files;
-            vector<ifstream *> file_ptrs;
-            unordered_map<string, int> key_offset_store;
-
-            void load_metadata();
-            void initialize_file_ptrs();
-            bool read_file(int file_num);
-            void initialize_key_offset_store();
-
-            
-
+            vector<ifstream *>* file_ptrs;
+            unordered_map<string, int>* key_offset_store;
+            int total_docs;
+    
         public:
             // Constructor
             CodeFetcher();
             ~CodeFetcher();
-            unordered_map<string, vector<vector<int>>> get_codes(vector<string> document_ids);
+            unordered_map<string, vector<vector<int>*>*>* get_codes(vector<string>* document_ids);
     };
 }
 

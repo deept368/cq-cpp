@@ -18,102 +18,69 @@ using namespace std;
 namespace lh {
     
     template<class T>
-    inline std::vector<T> convert_to_vector(T* input, std::size_t size){
-        std::vector<T> ans;
+    inline std::vector<T>* convert_to_vector(T* input, std::size_t size){
+        std::vector<T>* ans = new std::vector<T>();
         for(std::size_t idx=0; idx<size; idx++){
-            ans.push_back((T)input[idx]);
+            ans->push_back((T)input[idx]);
         }
         return ans;
     }
 
     template<class T>
-    inline std::vector<T> linearize_vector_of_vectors(std::vector<std::vector<T>> input) {
-        std::vector<T> ans;
-        for (const auto& v : input) {
-            for (auto d : v) {
-                ans.push_back(d);
+    inline std::vector<T>* linearize_vector_of_vectors(std::vector<std::vector<T>*>* input) {
+       std::vector<T>* ans = new std::vector<T>();
+        for (const auto& v : *input) {
+            for (auto& d : *v) {
+                ans->push_back(d);
             }
         }
-        return ans;
+        return ans; 
     }
 
 
-    
-    inline void printMap( unordered_map<int, unordered_map<string, vector<vector<int>>>> myMap){
-        for (const auto& outerPair : myMap) {
-        const int outerKey = outerPair.first;
-        const auto& outerValue = outerPair.second;
-
-        std::cout << "Outer key: " << outerKey << std::endl;
-            int idx =0;
-        // iterate over the inner map
-        for (const auto& innerPair : outerValue) {
-            if(idx == 5){
-                break;
-            }
-            const std::string& innerKey = innerPair.first;
-            const auto& innerValue = innerPair.second;
-
-            std::cout << "    Inner key: " << innerKey << std::endl;
-
-            // iterate over the vectors
-            for (const auto& vector : innerValue) {
-                std::cout << "        Vector: ";
-                for (const auto& element : vector) {
-                    std::cout << element << " ";
-                }
-                std::cout << std::endl;
-            }
-            idx++;
-        }
-        break;
-        }
-    }
-
-    inline std::vector<float> get_vec_from_file(std::string file_path){
-        std::vector<float> ans;
+    inline std::vector<float>* get_vec_from_file(std::string file_path){
+        std::vector<float>* ans;
         std::ifstream in;
         in.open(file_path);
         float element;
         if (in.is_open()) {
             while (in >> element) {
-                ans.push_back(element);
+                ans->push_back(element);
             }
         }
         in.close();
         return ans;
     }
 
-    inline std::vector<int> get_int_vec_from_file(std::string file_path){
-        std::vector<int> ans;
+    inline std::vector<int>* get_int_vec_from_file(std::string file_path){
+        std::vector<int>* ans;
         std::ifstream in;
         in.open(file_path);
         float element;
         if (in.is_open()) {
             while (in >> element) {
-                ans.push_back(element);
+                ans->push_back(element);
             }
         }
         in.close();
         return ans;
     }
 
-    inline std::vector<std::vector<int>> get_vec_of_vecs_from_file(std::string file_path){
+    inline std::vector<std::vector<int>>* get_vec_of_vecs_from_file(std::string file_path){
         ifstream file(file_path);
 
-        vector<vector<int>> vec;
+        vector<vector<int>>* vec;
 
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
             int num;
 
-            vector<int> innerVec;
+            vector<int>* innerVec;
             while (ss >> num) {
-                innerVec.push_back(num);
+                innerVec->push_back(num);
             }
-
-            vec.push_back(innerVec);
+            vec->push_back(*innerVec);
         }
         return vec;
     }

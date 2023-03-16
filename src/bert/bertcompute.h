@@ -16,7 +16,7 @@ namespace lh{
         public:
             explicit BertCompute();
             ~BertCompute();
-            std::vector<T> compute(std::vector<std::string> input_string, bool isQuery);
+            std::vector<T>* compute(std::vector<std::string>* input_string, bool isQuery);
 
         private:
             std::size_t query_maxlen;

@@ -14,7 +14,7 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<int, map<std::string,torch::Tensor>> decode();
+            map<int, map<std::string,torch::Tensor>*>* decode(int offset);
             
         private:
             QueryProcessor* query_processor_;
@@ -27,7 +27,7 @@ namespace lh{
             std::int64_t doc_maxlen_;
 
             torch::nn::EmbeddingImpl* non_contextual_embedding;
-            torch::Tensor codebook;
+            torch::Tensor* codebook;
             torch::nn::LinearImpl* composition_layer;
            
     };
