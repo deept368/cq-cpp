@@ -52,15 +52,19 @@ namespace lh
         for (const auto &queryDocMap : *queryResults) {
             int query_id = queryDocMap.first;
 
-            cout << "Now processing for query: " << query_id << " " << c++ << endl;
+            
 
             unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(queryDocMap.second);
 
             #pragma omp critical
-            {
+            {   cout << "Now processed for query: " << query_id << " " << c++ << endl;
+                if(c>=250){
+                break;
+                }
                 code_map->insert(make_pair(query_id, codes));
                 cout << "CodeMap size is " << code_map->size() << endl;
             }
+          
         }
 
         cout<<"returning codes"<<endl;

@@ -50,15 +50,19 @@ namespace lh{
 
         //approx document embeddings are retrieved for topK documents for each query
         map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode();
+        cout<<"reached after decoded"<<endl;
 
         for (const auto& query_doc_emb_pair : *query_doc_emb_approx_map) {
             std::string input_string = query_mapping_->getQuery(query_doc_emb_pair.first);
             input_strings->push_back(input_string);
         }
 
+        cout<<"input string created of size "<<input_strings->size()<<endl;
 
         //query input_strings are encoded
         auto Q_all = query_encoder_->encode(input_strings);
+
+        cout<<"able to encode"<<endl;
        
         std::size_t idx = 0;
         //for each query, score is computed in a sequential manner

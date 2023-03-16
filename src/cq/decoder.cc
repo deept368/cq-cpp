@@ -87,7 +87,6 @@ namespace lh{
             #pragma omp parallel for
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
-                cout << "Processing for document id: " << doc_id << endl;
                 vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
                 vector<int>* tokens = new vector<int>();
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
@@ -130,7 +129,6 @@ namespace lh{
                 }
                 delete tokens;
             }           
-
             #pragma omp critical
             {
                 query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));  
@@ -154,6 +152,7 @@ namespace lh{
 
         delete fetched_codes;
 
+        cout<<"returning decoded"<<endl;
         return query_doc_approx_emb_map;
     }
 }
