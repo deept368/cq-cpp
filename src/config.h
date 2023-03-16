@@ -15,13 +15,13 @@
 #define TORCH_DTYPE torch::kFloat32
 #define SIMILARITY_METRIC "cosine"
 #define CODEBOOK_DIM 8
-#define QUERY_FILE "../data/msmarco-test2019-queries-qrel.tsv"
-#define RESULTS_FILE "../data/retrieval-results.tsv"
-// #define QUERY_FILE "../data/queries.dev.tsv"
-// #define RESULTS_FILE "../data/index-sqhd-54-refcorrect-top1000.trec"
+// #define QUERY_FILE "../data/msmarco-test2019-queries-qrel.tsv"
+// #define RESULTS_FILE "../data/retrieval-results.tsv"
+#define QUERY_FILE "../data/queries.dev.tsv"
+#define RESULTS_FILE "../data/index-sqhd-54-refcorrect-top1000.trec"
 #define BASE_STORE_FILE "../data/output_result/result_"
 #define STORE_SIZE 256
 
-#define PRE_BATCH_SIZE 1
+#define PRE_BATCH_SIZE 7000
 
 #endif
