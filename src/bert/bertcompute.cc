@@ -32,7 +32,7 @@ namespace lh{
         google::protobuf::ShutdownProtobufLibrary();
         std::cout << "Successfully loaded parameters from protobuf!" << std::endl;
 
-        size_t pre_batch_size = 100;
+        size_t pre_batch_size = PRE_BATCH_SIZE;
         size_t pre_seq_len = 512;
         size_t num_heads = 12;
         size_t head_hidden_size = 64;
@@ -132,8 +132,8 @@ namespace lh{
         std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
         T* pool_output_ = new T[curr_batch_size * hidden_size_];  
         T* seq_output_= new T[size];    
+
         bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
-        
         //array output is converted to vector before returning 
         vector<T>* result = convert_to_vector(seq_output_, size);
 

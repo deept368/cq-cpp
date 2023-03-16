@@ -1,6 +1,4 @@
 #include "decoder.h"
-#include "queryprocessor.h"
-
 #include <torch/script.h>
 #include<iostream>
 #include<unordered_map>
@@ -10,7 +8,6 @@ using namespace std;
 namespace lh{
     
     Decoder::Decoder(){
-        query_processor_ = new QueryProcessor();
         vocab_size_ = VOCAB_SIZE;
         dimension_size_ = DIMENSION_SIZE;
         pad_token_id_ = PAD_TOKEN_ID; 
@@ -49,7 +46,6 @@ namespace lh{
 
   
     Decoder::~Decoder(){
-        delete query_processor_;
         delete non_contextual_embedding;
         delete codebook;
     }    
@@ -61,23 +57,12 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(int offset){
+     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes){
    
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
         codes and tokens of each document are fetched as vec<vec<int>> (dimensions: num of tokens * (K+1)) where 1 in (K+1) is used for static embedding token id. 
         */
-
-        #ifdef PRFILE_CQ
-                auto begin_fetch = std::chrono::system_clock::now();
-         #endif
-
-        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
-
-        #ifdef PRFILE_CQ
-                auto end_fetch = std::chrono::system_clock::now();
-                std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
-         #endif
 
         map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map = new map<int, map<std::string,torch::Tensor>*>();
 
@@ -132,19 +117,6 @@ namespace lh{
             }           
             query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));      
         }
-
-        for (auto& kv1 : *fetched_codes) {
-            for (auto& kv2 : *kv1.second) {
-                for (auto* ptr : *kv2.second) {
-                    delete ptr;
-                }
-                delete kv2.second;
-            }
-            delete kv1.second;
-        }
-
-        delete fetched_codes;
-
         return query_doc_approx_emb_map;
     }
 }
