@@ -49,11 +49,20 @@ namespace lh{
 
 
         int offset = 0;
+        while(offset <= 6980){
 
-        while(offset <= 1){
+             #ifdef PRFILE_CQ
+                auto begin_fetch = std::chrono::system_clock::now();
+            #endif
 
             unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
+            #ifdef PRFILE_CQ
+                auto end_fetch = std::chrono::system_clock::now();
+                std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
+            #endif
+
+
             std::vector<std::string>* input_strings = new std::vector<std::string>();
             
             
@@ -78,7 +87,6 @@ namespace lh{
 
               #ifdef PRFILE_CQ
                 auto being_encoding = std::chrono::system_clock::now();
-                
               #endif
                    
                 auto Q_all = query_encoder_->encode(input_strings);
