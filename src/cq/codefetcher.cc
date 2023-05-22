@@ -77,6 +77,7 @@ namespace lh{
 
     unordered_map<string, vector<vector<int>*>*>* CodeFetcher::get_codes(vector<string>* document_ids){
         // read document data
+        // doc_data_map -> (doc id (as string), list of tokens in a document where for each token, we have [token id + 16 codes for each token])
         unordered_map<string, vector<vector<int>*>*>* doc_data_map = new unordered_map<string, vector<vector<int>*>*>();
 
         for (auto& doc_id : *document_ids){

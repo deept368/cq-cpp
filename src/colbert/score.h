@@ -9,7 +9,8 @@ namespace lh{
         public:
             explicit Score();
             ~Score();
-            torch::Tensor compute_scores(torch::Tensor Q, torch::Tensor D);
+            std::vector<float> compute_scores(torch::Tensor Q, std::vector<torch::Tensor>& approx_tensors);
+            // std::vector<float> compute_scores(std::vector<float>& Q, std::vector<torch::Tensor>& approx_tensors);
             
         private:
             std::string similarity_metric_;

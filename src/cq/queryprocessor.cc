@@ -11,6 +11,8 @@ namespace lh
 
     QueryProcessor::QueryProcessor(){
         code_fetcher = new CodeFetcher();
+
+        // queryResults -> (query_id, list of doc ids (doc ids as strings - for hashing)) mapping
         queryResults = new unordered_map<int, vector<string>*>();
         ifstream file(RESULTS_FILE);
         if (!file) {
@@ -18,6 +20,7 @@ namespace lh
             return;
         }
 
+        // Get all query_id  to list of doc ids mapping from the top k documents file (provided as a .trec file)
         string line;
         while (getline(file, line)){
             istringstream ss(line);
@@ -57,7 +60,7 @@ namespace lh
             int query_id = it->first;
 
             cout << "Now processing for query: " << query_id << " " << i << endl;
-
+            // codes -> (doc id (as string), list of tokens in a document where for each token, we have [token id + 16 codes for each token])
             unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(it->second);
             code_map->insert(make_pair(query_id, codes));
         }

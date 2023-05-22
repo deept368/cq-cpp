@@ -27,6 +27,11 @@ namespace lh{
             torch::nn::EmbeddingImpl* non_contextual_embedding;
             torch::Tensor* codebook;
             torch::nn::LinearImpl* composition_layer;
+
+            std::vector<std::vector<float>>* static_embeddings_vec;
+            std::vector<std::vector<std::vector<float>>>* codebook_vec;
+            std::vector<std::vector<float>>* composition_weights_vec;
+            std::vector<float>* composition_bias_vec;
            
     };
 }

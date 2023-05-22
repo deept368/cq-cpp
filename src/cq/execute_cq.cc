@@ -50,12 +50,13 @@ namespace lh{
 
         int offset = 0;
 
-        while(offset <= 6980){
+        while(offset <= 2){
 
              #ifdef PRFILE_CQ
                 auto begin_fetch = std::chrono::system_clock::now();
             #endif
 
+            // fetched_codes -> <query_id, <doc_id - as string, list of 17 ints (1 token id + 16 codes) for all token of a document >>
             unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
              #ifdef PRFILE_CQ
@@ -68,6 +69,7 @@ namespace lh{
             #endif
 
             //approx document embeddings are retrieved for topK documents for each query
+            // query_doc_emb_approx_map -> <query_id, <doc_id - as string, approx doc embedding after decoding >>
             map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
 
             #ifdef PRFILE_CQ
@@ -88,7 +90,9 @@ namespace lh{
                 auto begin_encoding = std::chrono::system_clock::now();
               #endif
                    
-                auto Q_all = query_encoder_->encode(input_strings);
+                torch::Tensor Q_all = query_encoder_->encode(input_strings);
+                // std::vector<float> Q_all_vec = tensorToVector(Q_all);
+                std::cout << "execute_cq.cc::Q_all tensor size: " << Q_all.sizes() << std::endl;
                     
               #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
@@ -112,19 +116,14 @@ namespace lh{
                     approx_tensors->push_back(doc_emb_pairs.second);
                 }
 
-                auto doc_emb_approx = torch::cat(*approx_tensors, 0);
-                auto D = torch::nn::functional::normalize(doc_emb_approx,
-                                    torch::nn::functional::NormalizeFuncOptions().p(2).dim(2)); 
-
-                
-                auto score = score_->compute_scores(Q_all[idx].unsqueeze(0), D); 
+                std::vector<float> score = score_->compute_scores(Q_all[idx].unsqueeze(0), *approx_tensors); 
 
                 std::size_t doc_idx = 0;
                 map<std::string, float>* doc_id_score_map = new map<std::string, float>();
 
                 for (auto& doc_emb_pairs : *(query_doc_emb_pair.second)){
                     std::string doc_id = doc_emb_pairs.first;
-                    doc_id_score_map->insert(make_pair(doc_id, score[doc_idx].item<float>()));    
+                    doc_id_score_map->insert(make_pair(doc_id, score[doc_idx]));    
                     doc_idx++;
                 }
 
