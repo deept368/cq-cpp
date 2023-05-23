@@ -2,6 +2,7 @@
 #include <torch/script.h>
 #include<iostream>
 #include<unordered_map>
+#include<cmath>
 
 using namespace std;
 
@@ -24,10 +25,11 @@ namespace lh{
         std::cout << "decoder.cc::static_embeddings tensor size: " << (*static_embeddings).sizes() << std::endl;
 
         // convert from torch to vector<vector<float>>
-        std::vector<std::vector<float>> static_embeddings_vec((*static_embeddings).size(0), std::vector<float>((*static_embeddings).size(1)));
+        // std::vector<std::vector<float>>* static_embeddings_vec = new ((*static_embeddings).size(0), std::vector<float>((*static_embeddings).size(1)));
+        static_embeddings_vec = new std::vector<std::vector<float>>((*static_embeddings).size(0), std::vector<float>((*static_embeddings).size(1)));
         for (int i = 0; i < (*static_embeddings).size(0); ++i) {
             for (int j = 0; j < (*static_embeddings).size(1); ++j) {
-                static_embeddings_vec[i][j] = (*static_embeddings).index({i, j}).item<float>();
+                (*static_embeddings_vec)[i][j] = (*static_embeddings).index({i, j}).item<float>();
             }
         }
 
@@ -61,33 +63,14 @@ namespace lh{
         std::cout << "decoder.cc::codebook tensor size: " << (*codebook).sizes() << std::endl;
 
         // convert from torch to vector<vector<float>>
-        std::vector<std::vector<std::vector<float>>> codebook_vec((*codebook).size(0), std::vector<std::vector<float>>(((*codebook).size(1)), std::vector<float>(((*codebook).size(2)))));
+        codebook_vec = new std::vector<std::vector<std::vector<float>>>((*codebook).size(0), std::vector<std::vector<float>>(((*codebook).size(1)), std::vector<float>(((*codebook).size(2)))));
         for (int i = 0; i < (*codebook).size(0); ++i) {
             for (int j = 0; j < (*codebook).size(1); ++j) {
                 for (int k = 0; k < (*codebook).size(2); ++k) {
-                    codebook_vec[i][j][k] = (*codebook).index({i, j, k}).item<float>();
+                    (*codebook_vec)[i][j][k] = (*codebook).index({i, j, k}).item<float>();
                 }
             }
         }
-
-        // // print to check values
-        // // Printing values in static_embeddings
-        // std::cout << "Values in static_embeddings:" << std::endl;
-        // for (int i = 0; i < (*codebook).size(0); ++i) {
-        //     std::cout << (*codebook).index({i, 0, 0}).item<float>() << " " << (*codebook).index({i, 0, 1}).item<float>() << " " << (*codebook).index({i, 2, 0}).item<float>() << " " << (*codebook).index({i, 2, 1}).item<float>();
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        // }
-
-        // // // Printing values in static_embeddings_vec
-        // std::cout << "Values in static_embeddings_vec:" << std::endl;
-        // int i = 0;
-        // for (const auto& row : codebook_vec) {
-        //     std::cout << row[0][0] << " " << row[0][1] << " " << row[2][0] << " " << row[2][1];
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        //     i++;
-        // }
 
         //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
         torch::Tensor* composition_weights = new torch::Tensor();
@@ -95,31 +78,12 @@ namespace lh{
         std::cout << "decoder.cc::composition_weights tensor size: " << (*composition_weights).sizes() << std::endl;
 
         // convert from torch to vector<vector<float>>
-        std::vector<std::vector<float>> composition_weights_vec((*composition_weights).size(0), std::vector<float>((*composition_weights).size(1)));
+        composition_weights_vec = new std::vector<std::vector<float>>((*composition_weights).size(0), std::vector<float>((*composition_weights).size(1)));
         for (int i = 0; i < (*composition_weights).size(0); ++i) {
             for (int j = 0; j < (*composition_weights).size(1); ++j) {
-                composition_weights_vec[i][j] = (*composition_weights).index({i, j}).item<float>();
+                (*composition_weights_vec)[i][j] = (*composition_weights).index({i, j}).item<float>();
             }
         }
-
-        // // print to check values
-        // // Printing values in composition_weights
-        // std::cout << "Values in composition_weights:" << std::endl;
-        // for (int i = 0; i < (*composition_weights).size(0); ++i) {
-        //     std::cout << (*composition_weights).index({i, 0}).item<float>() << " " << (*composition_weights).index({i, 1}).item<float>();
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        // }
-
-        // // // Printing values in composition_weights_vec
-        // std::cout << "Values in composition_weights_vec:" << std::endl;
-        // int i = 0;
-        // for (const auto& row : composition_weights_vec) {
-        //     std::cout << row[0] << " " << row[1];
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        //     i++;
-        // }
 
         //composition layer bias are loaded as a 1-d Tensor of [dim_size(128)]
         torch::Tensor* composition_bias = new torch::Tensor();
@@ -127,29 +91,10 @@ namespace lh{
         std::cout << "decoder.cc::composition_bias tensor size: " << (*composition_bias).sizes() << std::endl;
 
         // convert from torch to vector<vector<float>>
-        std::vector<float> composition_bias_vec((*composition_bias).size(0));
+        composition_bias_vec = new std::vector<float>((*composition_bias).size(0));
         for (int i = 0; i < (*composition_bias).size(0); ++i) {
-            composition_bias_vec[i] = (*composition_bias).index({i}).item<float>();
+            (*composition_bias_vec)[i] = (*composition_bias).index({i}).item<float>();
         }
-
-        // // // print to check values
-        // // Printing values in static_embeddings
-        // std::cout << "Values in composition_bias:" << std::endl;
-        // for (int i = 0; i < (*composition_bias).size(0); ++i) {
-        //     std::cout << (*composition_bias).index({i}).item<float>();
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        // }
-
-        // // // Printing values in composition_bias_vec
-        // std::cout << "Values in composition_bias_vec:" << std::endl;
-        // i = 0;
-        // for (const auto& row : composition_bias_vec) {
-        //     std::cout << row;
-        //     std::cout << std::endl;
-        //     if (i>10) break;
-        //     i++;
-        // }
 
         //torch::nn::LinearImpl(PyTorch C++) is used to initialise a linear compositon layers and weights and bias are set
         composition_layer = new torch::nn::LinearImpl(torch::nn::LinearOptions(2*dimension_size_, dimension_size_).bias(true));
@@ -183,12 +128,14 @@ namespace lh{
         int query_counter = 0;
         for (auto&  query_doc_pairs : *fetched_codes) {
             int query_id = query_doc_pairs.first;
+            cout << std::endl << std::endl;
             cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
             unordered_map<string, vector<vector<int>*>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
+                cout << "Processing for Document: " << doc_id << " "  << std::endl;
                 vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
                 vector<int>* tokens = new vector<int>();
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
@@ -202,70 +149,132 @@ namespace lh{
                 torch::Tensor static_embs = non_contextual_embedding->forward(token_tensor);
                 std::cout << "decoder.cc::static_embs tensor size: " << static_embs.sizes() << std::endl;
 
-                std::cout << "Values in static_embs:" << std::endl;
-                // std::cout << "Val test: " << (static_embs).index({0, 0}).item<float>() << std::endl;
-                std::cout << static_embs << std::endl;
-
-
-                cout << "Declaration" << std::endl;
-                cout << "static_embeddings_vec sizes: " << static_embeddings_vec->size() << " " <<  std::endl;
-                std::vector<std::vector<float>> token_tensor_vec(tokens->size(), std::vector<float>((*static_embeddings_vec)[0].size()));
-                cout << "Declared" << std::endl;
-                // for (int i = 0; i < tokens->size(); ++i) {
-                //     cout << "yes" << std::endl;
-                //     int token_index = (*tokens)[i];
-                //     for (int j = 0; j < (*static_embeddings_vec)[1].size(); ++j)
-                //         token_tensor_vec[i][j] = (*static_embeddings_vec)[token_index][j];
-                // }
-                // std::vector<std::vector<float>> token_tensor_vec(tokens->size(), std::vector<float>((*static_embeddings_vec)[0].size()));
-                // for (int i = 0; i < tokens->size(); ++i) {
-                //     int token_index = (*tokens)[i];
-                //     token_tensor_vec[i] = (*static_embeddings_vec)[token_index];
-                // }
+                std::vector<std::vector<float>> static_embs_vec(tokens->size(), std::vector<float>((*static_embeddings_vec)[0].size()));
+                for (int i = 0; i < tokens->size(); ++i) {
+                    int token_index = (*tokens)[i];
+                    static_embs_vec[i] = (*static_embeddings_vec)[token_index];
+                }
 
                 // // print to check values
-                // Printing values in static_embeddings
-                std::cout << "Values in static_embs:" << std::endl;
-                // std::cout << "Val test: " << (static_embs).index({0, 0}).item<float>() << std::endl;
-                std::cout << static_embs << std::endl;
+                // // Printing values in static_embeddings
+                // std::cout << "Values in static_embs:" << std::endl;
+                // for (int i = 0; i < static_embs.size(0); ++i) {
+                //     std::cout << static_embs.index({i, 0}).item<float>() << " " << static_embs.index({i, 1}).item<float>();
+                //     std::cout << std::endl;
+                //     if (i>10) break;
+                // }
 
                 // // // Printing values in static_embeddings_vec
-                // std::cout << "Values in composition_bias_vec:" << std::endl;
-                // i = 0;
-                // for (const auto& row : composition_bias_vec) {
-                //     std::cout << row;
+                // std::cout << "Values in static_embs_vec:" << std::endl;
+                // int i = 0;
+                // for (const auto& row : static_embs_vec) {
+                //     std::cout << row[0] << " " << row[1];
                 //     std::cout << std::endl;
                 //     if (i>10) break;
                 //     i++;
                 // }
+                std::cout << "decoder.cc::codebook_vec size: " << (*codebook_vec).size() << " " << ((*codebook_vec)[0].size()) << " " << (*codebook_vec)[0][0].size() << " " << std::endl;
 
-
-                
+                std::cout << "decoder.cc::codes_vec size: " << codes_vec->size() << " " << ((*codes_vec)[0]->size()) << std::endl;
+                // std::cout << "First codes_vec:" << std::endl;
+                // for (int i=0; i < (*codes_vec)[0]->size(); i++)
+                //     std::cout << (*(*codes_vec)[0])[i] << " ";
+                // std::cout << std::endl;
                 //compute the approx embeddings for the document using the codes and codebook
                 auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
+                // std::cout << "decoder.cc::linear_codes_vec tensor size: " << linear_codes_vec->size() << std::endl;
                 auto options_int = torch::TensorOptions().dtype(torch::kInt);
                 auto codes = torch::from_blob(linear_codes_vec->data(),
                                   {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)(*codes_vec)[0]->size()});
+                // std::cout << "decoder.cc::codes tensor size: " << codes.sizes() << std::endl;
                 
                 auto code_sparse = torch::zeros({codes.size(0), (std::int64_t)M_, (std::int64_t)K_}, torch::kFloat);
                 auto indices = codes.unsqueeze(2).to(torch::kLong);
                 code_sparse.scatter_(-1, indices, 1.0);
+                // std::cout << "decoder.cc::code_sparse tensor size: " << code_sparse.sizes() << std::endl;
                 
                 auto decoded = torch::matmul(*codebook, code_sparse.unsqueeze(-1)).squeeze(-1);
+                // std::cout << "decoder.cc::decoded tensor size: " << decoded.sizes() << std::endl;
                 auto codeapprox = decoded.reshape({decoded.size(0), (std::int64_t)M_*(std::int64_t)codebook_dim_});
-                
+                // std::cout << "decoder.cc::codeapprox tensor size: " << codeapprox.sizes() << std::endl;
 
                 //static_embs and approx_codes are concatenated
                 auto cat_res = torch::cat({codeapprox, static_embs}, 1);
+                std::cout << "decoder.cc::cat_res tensor size: " << cat_res.sizes() << std::endl;
+
+                std::vector<std::vector<float>> cat_res_vec(codes_vec->size(), std::vector<float>(((std::int64_t)M_*(std::int64_t)codebook_dim_)* 2));
+                for (int token_num=0; token_num < codes_vec->size(); token_num++) {
+                    int cat_res_vec_index = 0;
+                    for (int i=0; i<M_; i++) {
+                        for (int j=0; j<codebook_dim_; j++) {
+                            cat_res_vec[token_num][cat_res_vec_index] = (*codebook_vec)[i][j][(*(*codes_vec)[token_num])[i]];
+                            cat_res_vec_index++;
+                        }
+                    }
+                    for (int i=0; i < static_embs_vec[0].size(); i++){
+                        cat_res_vec[token_num][M_*codebook_dim_ + i] = static_embs_vec[token_num][i];
+                    }
+                }
+
+                // // print to check values
+                // // Printing values in cat_res
+                // std::cout << "Values in cat_res tensor:" << std::endl;
+                // for (int i = 0; i < cat_res.size(0); ++i) {
+                //     std::cout << cat_res.index({i, 0}).item<float>() << " " << cat_res.index({i, cat_res.size(1) - 1}).item<float>();
+                //     std::cout << std::endl;
+                //     if (i>10) break;
+                // }
+                // std::cout << cat_res.index({cat_res.size(0) - 1, 0}).item<float>() << " " << cat_res.index({cat_res.size(0) - 1, cat_res.size(1) - 1}).item<float>();
+
+                // // // Printing values in cat_res_vec
+                // std::cout << "Values in cat_res_vec:" << std::endl;
+                // int i = 0;
+                // for (const auto& row : cat_res_vec) {
+                //     std::cout << row[0] << " " << row[row.size() - 1];
+                //     std::cout << std::endl;
+                //     if (i>10) break;
+                //     i++;
+                // }
+                // std::cout << cat_res_vec[cat_res_vec.size()-1][0] << " " << cat_res_vec[cat_res_vec.size()-1][cat_res_vec[0].size() - 1];
                 
                 //composition layer is applied to get one final approx decoded embeddings for document
                 auto composition_result = composition_layer->forward(cat_res);
+                std::cout << "decoder.cc::composition_result tensor size: " << composition_result.sizes() << std::endl;
                 composition_result = composition_result.unsqueeze(0);
-                
+                std::cout << "decoder.cc::composition_result tensor size: " << composition_result.sizes() << std::endl;
+
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
                 torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
+                std::cout << "decoder.cc::full_tensor tensor size: " << full_tensor.sizes() << std::endl;
                 full_tensor.slice(1, 0, tokens->size()) = composition_result;
+                std::cout << "decoder.cc::full_tensor tensor size after slice: " << full_tensor.sizes() << std::endl;
                 docId_emb_map->insert(make_pair(doc_id, full_tensor));
+
+
+                // // // Calculate composition_result (vector)
+                // std::vector<float> composition_result_vec(dimension_size_, 0.0);
+                // for (int i = 0; i < cat_res_vec.size(); i++) {
+                //     for (int j = 0; j < dimension_size_; j++) {
+                //         composition_result_vec[j] += cat_res_vec[i][j] * (*composition_weights_vec)[i][j];
+                //     }
+                // }
+                // for (int i = 0; i < dimension_size_; i++) {
+                //     composition_result_vec[i] = std::tanh(composition_result_vec[i] + composition_bias_vec[i]);
+                // }
+
+                // // Create full_tensor
+                // std::vector<std::vector<float>> full_tensor(doc_maxlen_, std::vector<float>(dimension_size_, 0.0));
+                // for (int i = 0; i < tokens->size(); i++) {
+                //     for (int j = 0; j < dimension_size_; j++) {
+                //         full_tensor[i][j] = composition_result_vec[j];
+                //     }
+                // }
+
+                // // Convert full_tensor to a flat vector
+                // std::vector<float> final_result;
+                // for (const auto& row : full_tensor) {
+                //     final_result.insert(final_result.end(), row.begin(), row.end());
+                // }
 
                 delete tokens;
             }           
