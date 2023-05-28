@@ -70,7 +70,8 @@ namespace lh{
 
             //approx document embeddings are retrieved for topK documents for each query
             // query_doc_emb_approx_map -> <query_id, <doc_id - as string, approx doc embedding after decoding >>
-            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
+            // map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
+            map<int, map<std::string,std::vector<std::vector<std::vector<float>>>*>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
 
             #ifdef PRFILE_CQ
                 auto end_decoding = std::chrono::system_clock::now();
@@ -113,7 +114,23 @@ namespace lh{
               
                 std::vector<torch::Tensor>* approx_tensors = new std::vector<torch::Tensor>();
                 for (auto& doc_emb_pairs : *(query_doc_emb_pair.second)){
-                    approx_tensors->push_back(doc_emb_pairs.second);
+                    std::vector<std::vector<std::vector<float>>>* approx_tensors_vec = doc_emb_pairs.second;
+                    size_t dim1 = (*approx_tensors_vec).size();
+                    size_t dim2 = (*approx_tensors_vec)[0].size();
+                    size_t dim3 = (*approx_tensors_vec)[0][0].size();
+
+                    // Create a new empty tensor with the correct dimensions
+                    torch::Tensor tensor = torch::empty({static_cast<long>(dim1), static_cast<long>(dim2), static_cast<long>(dim3)}, torch::kFloat32);
+
+                    // Fill the tensor with data from the vector of vectors of vectors
+                    for (size_t i = 0; i < dim1; ++i) {
+                        for (size_t j = 0; j < dim2; ++j) {
+                        for (size_t k = 0; k < dim3; ++k) {
+                            tensor[i][j][k] = (*approx_tensors_vec)[i][j][k];
+                        }
+                        }
+                    }
+                    approx_tensors->push_back(tensor);
                 }
 
                 std::vector<float> score = score_->compute_scores(Q_all[idx].unsqueeze(0), *approx_tensors); 
@@ -153,7 +170,7 @@ namespace lh{
             delete input_strings;
             for (auto& kv1 : *query_doc_emb_approx_map) {
                 for (auto& kv2 : *kv1.second) {
-                    kv2.second.reset();
+                    delete kv2.second;
                 }
                 kv1.second->clear();
                 delete kv1.second;

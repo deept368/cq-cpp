@@ -13,7 +13,7 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<int, map<std::string,torch::Tensor>*>* decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes);
+            map<int, map<std::string,std::vector<std::vector<std::vector<float>>>*>*>* decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes);
             
         private:
             std::int64_t vocab_size_;

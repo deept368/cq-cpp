@@ -115,7 +115,7 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes){
+     map<int, map<std::string,std::vector<std::vector<std::vector<float>>>*>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes){
    
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
@@ -123,6 +123,7 @@ namespace lh{
         */
 
         map<int, map<std::string,torch::Tensor>*>* query_doc_approx_emb_map = new map<int, map<std::string,torch::Tensor>*>();
+        map<int, map<std::string,std::vector<std::vector<std::vector<float>>>*>*>* query_doc_approx_emb_map_vec = new map<int, map<std::string,std::vector<std::vector<std::vector<float>>>*>*>();
 
         //we loop over each query string
         int query_counter = 0;
@@ -132,6 +133,7 @@ namespace lh{
             cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
             unordered_map<string, vector<vector<int>*>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
+            map<std::string, std::vector<std::vector<std::vector<float>>>*>* docId_emb_map_vec = new std::map<std::string, std::vector<std::vector<std::vector<float>>>*>;
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
@@ -248,7 +250,41 @@ namespace lh{
                 std::cout << "decoder.cc::full_tensor tensor size: " << full_tensor.sizes() << std::endl;
                 full_tensor.slice(1, 0, tokens->size()) = composition_result;
                 std::cout << "decoder.cc::full_tensor tensor size after slice: " << full_tensor.sizes() << std::endl;
+
+                std::vector<std::vector<std::vector<float>>>* full_tensor_vec;
+                full_tensor_vec = new std::vector<std::vector<std::vector<float>>>(full_tensor.size(0), std::vector<std::vector<float>>((full_tensor.size(1)), std::vector<float>((full_tensor.size(2)))));
+                for (int i = 0; i < full_tensor.size(0); ++i) {
+                    for (int j = 0; j < full_tensor.size(1); ++j) {
+                        for (int k = 0; k < full_tensor.size(2); ++k) {
+                            (*full_tensor_vec)[i][j][k] = full_tensor.index({i, j, k}).item<float>();
+                        }
+                    }
+                }
+
+                // // print to check values
+                // // Printing values in cat_res
+                // std::cout << "Values in cat_res tensor:" << std::endl;
+                // for (int i = 0; i < cat_res.size(0); ++i) {
+                //     std::cout << cat_res.index({i, 0}).item<float>() << " " << cat_res.index({i, cat_res.size(1) - 1}).item<float>();
+                //     std::cout << std::endl;
+                //     if (i>10) break;
+                // }
+                // std::cout << cat_res.index({cat_res.size(0) - 1, 0}).item<float>() << " " << cat_res.index({cat_res.size(0) - 1, cat_res.size(1) - 1}).item<float>();
+
+                // // // Printing values in cat_res_vec
+                // std::cout << "Values in cat_res_vec:" << std::endl;
+                // int i = 0;
+                // for (const auto& row : cat_res_vec) {
+                //     std::cout << row[0] << " " << row[row.size() - 1];
+                //     std::cout << std::endl;
+                //     if (i>10) break;
+                //     i++;
+                // }
+                // std::cout << cat_res_vec[cat_res_vec.size()-1][0] << " " << cat_res_vec[cat_res_vec.size()-1][cat_res_vec[0].size() - 1];
+
+
                 docId_emb_map->insert(make_pair(doc_id, full_tensor));
+                docId_emb_map_vec->insert(make_pair(doc_id, full_tensor_vec));
 
 
                 // // // Calculate composition_result (vector)
@@ -278,9 +314,10 @@ namespace lh{
 
                 delete tokens;
             }           
-            query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map));      
+            query_doc_approx_emb_map->insert(make_pair(query_id, docId_emb_map)); 
+            query_doc_approx_emb_map_vec->insert(make_pair(query_id, docId_emb_map_vec));     
         }
-        return query_doc_approx_emb_map;
+        return query_doc_approx_emb_map_vec;
     }
 }
    
