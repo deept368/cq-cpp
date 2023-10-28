@@ -5,3 +5,4 @@
 /output
 *.zip
 /model/model.proto
+/model/temp
