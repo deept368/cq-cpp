@@ -18,7 +18,7 @@ endif(PROFILE_ENABLE)
 include(FindProtobuf)
 find_package(Protobuf REQUIRED)
 
-set(MKL_ROOT /opt/intel/mkl)
+set(MKL_ROOT /opt/intel/oneapi/mkl/latest)
 include(FindMKL)
 find_package(MKL REQUIRED)
 
@@ -26,7 +26,7 @@ find_package(Threads REQUIRED)
 
 
 
-set(utf8proc_LIBRARY /usr/local/lib/libutf8proc.a)
+set(utf8proc_LIBRARY /home/ajit/utf8proc/libutf8proc.a)
 set(utf8proc_INCLUDE_DIR /usr/local/include)
 
 include_directories(${utf8proc_INCLUDE_DIR} ${MKL_INCLUDES})

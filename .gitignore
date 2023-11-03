@@ -4,3 +4,6 @@
 /build
 /output
 *.zip
+/model/model.proto
+/model/temp
+../src/bert/__pycache__/
