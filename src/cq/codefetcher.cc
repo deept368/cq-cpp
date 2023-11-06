@@ -25,6 +25,7 @@ namespace lh{
         number_of_files = STORE_SIZE;
         key_offset_store = new unordered_map<string, int>();
         file_ptrs = new vector<ifstream *>();
+        codes_store = new unordered_map<string, vector<vector<int>*>*>();
         
         for (int i = 0; i < number_of_files; i++) {
             (*file_ptrs).push_back(new ifstream(base_filename + to_string(i), ios::binary));
@@ -58,8 +59,38 @@ namespace lh{
                 
                 }
                 total_docs += num_docs;
+
+                infile.seekg((*key_offset_store)[to_string(i)] / 8, ios::beg);
+                
+                if (IN_MEMORY_CODES) {
+                    for (int j = 0; j < num_docs; j++) {
+                        // cout << "Document id code fetch: " << j << std::endl;
+                        string doc_id = to_string(256*(j) + i);
+                        int token_id = -1;
+                        vector<vector<int>*>* doc_data = new vector<vector<int>*>();
+                        // cout << "REACHED Document id " << (*key_offset_store)[doc_id] << std::endl;
+                        // infile.seekg((*key_offset_store)[doc_id] / 8, ios::beg);
+                        
+                        while (token_id != 102){
+                            char buffer[18];
+                            infile.read(buffer, 18);
+
+                            token_id = ntohs(*(reinterpret_cast<int*>(buffer)));
+                            vector<int>* token_data = new vector<int>();
+                            token_data->push_back(token_id);
+                            for (int i = 2; i < 18; i++){
+                                token_data->push_back((unsigned char)buffer[i]);
+                            }
+                            doc_data->push_back(token_data);
+                        }
+                        codes_store->insert(make_pair(doc_id, doc_data));
+                    }
+
+                    cout << "Processed file " << i << std::endl;
+                }
             }
         }
+
         cout << "Total documents: " << total_docs << endl;
     }
 
@@ -77,28 +108,35 @@ namespace lh{
 
     unordered_map<string, vector<vector<int>*>*>* CodeFetcher::get_codes(vector<string>* document_ids){
         // read document data
+        // doc_data_map -> (doc id (as string), list of tokens in a document where for each token, we have [token id + 16 codes for each token])
         unordered_map<string, vector<vector<int>*>*>* doc_data_map = new unordered_map<string, vector<vector<int>*>*>();
 
         for (auto& doc_id : *document_ids){
-            int file_idx = stoi(doc_id) % 256;
-            int bit_offset = key_offset_store->at(doc_id);
-            ifstream &file = *(*file_ptrs)[file_idx];
-            file.seekg(bit_offset / 8, ios::beg);
-            int token_id = -1;
             vector<vector<int>*>* doc_data = new vector<vector<int>*>();
-
-            while (token_id != 102){
-                char buffer[18];
-                file.read(buffer, 18);
-
-                token_id = ntohs(*(reinterpret_cast<int* >(buffer)));
-                vector<int>* token_data = new vector<int>();
-                token_data->push_back(token_id);
-                for (int i = 2; i < 18; i++){
-                    token_data->push_back((unsigned char)buffer[i]);
-                }
-                doc_data->push_back(token_data);
+            if (IN_MEMORY_CODES) {
+                doc_data = (*codes_store)[doc_id];
             }
+            else {
+                int file_idx = stoi(doc_id) % 256;
+                int bit_offset = key_offset_store->at(doc_id);
+                ifstream &file = *(*file_ptrs)[file_idx];
+                file.seekg(bit_offset / 8, ios::beg);
+                int token_id = -1;
+
+                while (token_id != 102){
+                    char buffer[18];
+                    file.read(buffer, 18);
+
+                    token_id = ntohs(*(reinterpret_cast<int* >(buffer)));
+                    vector<int>* token_data = new vector<int>();
+                    token_data->push_back(token_id);
+                    for (int i = 2; i < 18; i++){
+                        token_data->push_back((unsigned char)buffer[i]);
+                    }
+                    doc_data->push_back(token_data);
+                }
+            }
+            
             doc_data_map->insert(make_pair(doc_id, doc_data));
         }
         return doc_data_map;

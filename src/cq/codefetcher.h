@@ -7,6 +7,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include "../config.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ namespace lh{
             int number_of_files;
             vector<ifstream *>* file_ptrs;
             unordered_map<string, int>* key_offset_store;
+            unordered_map<string, vector<vector<int>*>*>* codes_store;
             int total_docs;
     
         public:
