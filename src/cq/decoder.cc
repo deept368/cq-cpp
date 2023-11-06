@@ -30,6 +30,19 @@ namespace lh{
         codebook = new torch::Tensor();
         torch::load(*codebook, "../model/codebook.pt");
 
+        *codebook = codebook->transpose(1, 2);
+        *codebook = codebook->contiguous();
+
+        for (int i = 0; i < codebook->size(0); i++) {
+            for (int j = 0; j < codebook->size(1); j++) {
+                for (int k = 0; k < codebook->size(2); k++) {
+                    codebook_vector.push_back((*codebook)[i][j][k].item<float>());
+                }
+            }
+        }
+
+        // cout << "codebook shape: " << codebook->dtype() << " " << codebook->size(0) << " " << codebook->size(1) << " " << codebook->size(2) << endl;
+
         //composition layers weights are loaded as a 2-d Tensor of [dim_size(128) * (2*dim_size)]
         torch::Tensor* composition_weights = new torch::Tensor();
         torch::load(*composition_weights, "../model/composition_c_e_linear_weights.pt");
@@ -77,11 +90,20 @@ namespace lh{
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
                 vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
+
+                float code_approx[codes_vec->size()][128];
+
                 vector<int>* tokens = new vector<int>();
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
+                int idx = 0;
                 for(auto& token_vec: *codes_vec){
                     tokens->push_back(token_vec->front());
-                    token_vec->erase(token_vec->begin());   
+                    for (int i = 0; i < 16; i++)
+                        memcpy(&(code_approx[idx][i*8]), &(codebook_vector[i*256*8 + (*token_vec)[i+1] * 8]), 8*sizeof(float));
+                        // code_approx[idx].slice(0, i*8, (i+1)*8) = 0;
+                        // ((*codebook)[i])[(*token_vec)[i+1]]; // 8
+                    // token_vec->erase(token_vec->begin());
+                    idx += 1;
                 }
 
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
@@ -89,28 +111,42 @@ namespace lh{
                 auto static_embs = non_contextual_embedding->forward(token_tensor);
                 
                 //compute the approx embeddings for the document using the codes and codebook
-                auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
-                auto options_int = torch::TensorOptions().dtype(torch::kInt);
-                auto codes = torch::from_blob(linear_codes_vec->data(),
-                                  {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)(*codes_vec)[0]->size()});
-                auto code_sparse = torch::zeros({codes.size(0), (std::int64_t)M_, (std::int64_t)K_}, torch::kFloat);
-                auto indices = codes.unsqueeze(2).to(torch::kLong);
-                code_sparse.scatter_(-1, indices, 1.0);
+                // auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
+                // auto options_int = torch::TensorOptions().dtype(torch::kInt);
+                // auto codes = torch::from_blob(linear_codes_vec->data(),
+                //                   {1, int(linear_codes_vec->size())}, options_int).view({(std::int64_t)codes_vec->size(), (std::int64_t)(*codes_vec)[0]->size()});
+                // auto code_sparse = torch::zeros({codes.size(0), (std::int64_t)M_, (std::int64_t)K_}, torch::kFloat);
+                // auto indices = codes.unsqueeze(2).to(torch::kLong);
+                // code_sparse.scatter_(-1, indices, 1.0);
+
+                // cout << "code_sparse shape: " << code_sparse.size(0) << " " << code_sparse.size(1) << " " << code_sparse.size(2) << endl;
                 
-                auto decoded = torch::matmul(*codebook, code_sparse.unsqueeze(-1)).squeeze(-1);
-                auto codeapprox = decoded.reshape({decoded.size(0), (std::int64_t)M_*(std::int64_t)codebook_dim_});
+                // auto decoded = torch::matmul(*codebook, code_sparse.unsqueeze(-1)).squeeze(-1);
+                // auto codeapprox = decoded.reshape({decoded.size(0), (std::int64_t)M_*(std::int64_t)codebook_dim_});
                 
+                auto codeapprox = torch::from_blob(code_approx, {(signed long long)codes_vec->size(), 128});
 
                 //static_embs and approx_codes are concatenated
                 auto cat_res = torch::cat({codeapprox, static_embs}, 1);
+
+                // cout << "codeapprox shape: " << code_approx.size(0) << " " << code_approx.size(1) << endl;
+
+                // cout << "cat_res shape: " << cat_res.size(0) << " " << cat_res.size(1) << endl;
                 
                 //composition layer is applied to get one final approx decoded embeddings for document
                 auto composition_result = composition_layer->forward(cat_res);
                 composition_result = composition_result.unsqueeze(0);
+
+                // cout << "composition shape: " << composition_result.size(0) << " " << composition_result.size(1) << " " << composition_result.size(2) << endl;
                 
                 //all tensors are made of same shape [1 * doc_maxlen * dim_size]
-                torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
-                full_tensor.slice(1, 0, tokens->size()) = composition_result;
+
+                auto zeropad = torch::zeros({1, (signed long)(doc_maxlen_ - tokens->size()), dimension_size_});
+                auto full_tensor = torch::cat({composition_result, zeropad}, 1);
+
+                // torch::Tensor full_tensor = torch::pad(composition_result, (0, doc_maxlen_ - tokens->size(), 0), "constant", 0);
+                // torch::Tensor full_tensor = torch::zeros({1, doc_maxlen_, dimension_size_});
+                // full_tensor.slice(1, 0, tokens->size()) = composition_result;
                 docId_emb_map->insert(make_pair(doc_id, full_tensor));
 
                 delete tokens;

@@ -24,6 +24,8 @@ namespace lh{
             std::int64_t codebook_dim_;
             std::int64_t doc_maxlen_;
 
+            vector<float> codebook_vector;
+
             torch::nn::EmbeddingImpl* non_contextual_embedding;
             torch::Tensor* codebook;
             torch::nn::LinearImpl* composition_layer;
