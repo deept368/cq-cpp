@@ -20,6 +20,7 @@
 #define QUERY_FILE "../data/queries.dev.tsv"
 #define RESULTS_FILE "../data/index-sqhd-54-refcorrect-top1000.trec"
 #define BASE_STORE_FILE "../data/output_result/result_"
+#define IN_MEMORY_CODES true
 #define STORE_SIZE 256
 
 #define PRE_BATCH_SIZE 100
