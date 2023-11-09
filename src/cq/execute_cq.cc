@@ -152,13 +152,6 @@ namespace lh{
             #endif
 
             delete input_strings;
-            for (auto& kv1 : *query_doc_emb_approx_map) {
-                for (auto& kv2 : *kv1.second) {
-                    kv2.second.reset();
-                }
-                kv1.second->clear();
-                delete kv1.second;
-            }
 
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
