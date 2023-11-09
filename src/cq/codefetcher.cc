@@ -59,10 +59,10 @@ namespace lh{
                 
                 }
                 total_docs += num_docs;
-
-                infile.seekg((*key_offset_store)[to_string(i)] / 8, ios::beg);
                 
                 if (IN_MEMORY_CODES) {
+                    infile.seekg((*key_offset_store)[to_string(i)] / 8, ios::beg);
+
                     for (int j = 0; j < num_docs; j++) {
                         // cout << "Document id code fetch: " << j << std::endl;
                         string doc_id = to_string(256*(j) + i);
@@ -83,6 +83,8 @@ namespace lh{
                             }
                             doc_data->push_back(token_data);
                         }
+                        
+                        
                         codes_store->insert(make_pair(doc_id, doc_data));
                     }
 
@@ -90,7 +92,6 @@ namespace lh{
                 }
             }
         }
-
         cout << "Total documents: " << total_docs << endl;
     }
 
@@ -117,7 +118,7 @@ namespace lh{
                 doc_data = (*codes_store)[doc_id];
             }
             else {
-                int file_idx = stoi(doc_id) % 256;
+                int file_idx = stoi(doc_id) % number_of_files;
                 int bit_offset = key_offset_store->at(doc_id);
                 ifstream &file = *(*file_ptrs)[file_idx];
                 file.seekg(bit_offset / 8, ios::beg);

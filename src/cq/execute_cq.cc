@@ -162,18 +162,23 @@ namespace lh{
 
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
+
             for (auto& kv1 : *fetched_codes) {
                 for (auto& kv2 : *kv1.second) {
-                    for (auto* ptr : *kv2.second) {
-                        delete ptr;
+                    if (! IN_MEMORY_CODES)
+                    {
+                        for (auto* ptr : *kv2.second) 
+                            delete ptr;
                     }
+                    
                     delete kv2.second;
                 }
                 delete kv1.second;
             }
 
             delete fetched_codes;
-            offset+=PRE_BATCH_SIZE;
+            
+            offset += PRE_BATCH_SIZE;
         }
 
           #ifdef PRFILE_CQ
