@@ -50,7 +50,7 @@ namespace lh{
 
         int offset = 0;
 
-        while(offset <= 6980){
+        while(offset <= TOTAL_QUERIES / PRE_BATCH_SIZE){
 
              #ifdef PRFILE_CQ
                 auto begin_fetch = std::chrono::system_clock::now();
