@@ -16,12 +16,14 @@ namespace lh{
     {
     private:
         unordered_map<int, vector<string>*>* queryResults;
+        unordered_map<int, unordered_map<string, float>> originalScores;
         CodeFetcher* code_fetcher;
     
     public:
         QueryProcessor();
         ~QueryProcessor();
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes(int offset);
+        const unordered_map<int, unordered_map<string, float>>& getOriginalScores();
        
     };
 }

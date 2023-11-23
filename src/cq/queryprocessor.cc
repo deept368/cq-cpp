@@ -21,13 +21,19 @@ namespace lh
         string line;
         while (getline(file, line)){
             istringstream ss(line);
-            string queryId, temp1, docId, temp2, temp3, temp4;
-            ss >> queryId >> temp1 >> docId >> temp2 >> temp3 >> temp4;
+            string queryId, temp1, docId, temp2, original_score, temp4;
+            ss >> queryId >> temp1 >> docId >> temp2 >> original_score >> temp4;
             
             if (queryResults->find(stoi(queryId)) == queryResults->end()){
                 queryResults->insert({stoi(queryId), new std::vector<std::string>()});
             } 
-            (*queryResults)[stoi(queryId)]->push_back(docId);            
+            (*queryResults)[stoi(queryId)]->push_back(docId);
+
+            if (AVERAGE_SCORE)
+            {
+                // convert score from string representation of int (float with precision 4) to a float 
+                originalScores[stoi(queryId)][docId] = stof(original_score.substr(0, original_score.length() - 4) + '.' + original_score.substr(original_score.length() - 4));
+            }
         }
 
         file.close();
@@ -43,7 +49,8 @@ namespace lh
     }   
     
 
-    unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* QueryProcessor::getCodes(int offset){
+    unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* QueryProcessor::getCodes(int offset)
+    {
         unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* code_map = new unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>();
        
 
@@ -63,6 +70,11 @@ namespace lh
         }
        
         return code_map;
+    }
+
+    const unordered_map<int, unordered_map<string, float>>& QueryProcessor::getOriginalScores()
+    {
+        return originalScores;
     }
 
 };
