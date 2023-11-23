@@ -50,6 +50,7 @@ namespace lh{
 
         int offset = 0;
 
+        vector<int> fetch_times, decoding_times, encoding_times, scoring_times;
         while(offset <= TOTAL_QUERIES / PRE_BATCH_SIZE){
 
              #ifdef PRFILE_CQ
@@ -60,6 +61,7 @@ namespace lh{
             
              #ifdef PRFILE_CQ
                 auto end_fetch = std::chrono::system_clock::now();
+                fetch_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000);
                 std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
             #endif
 
@@ -72,6 +74,7 @@ namespace lh{
 
             #ifdef PRFILE_CQ
                 auto end_decoding = std::chrono::system_clock::now();
+                decoding_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000);
                 std::cout<<"total decoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_decoding-begin_decoding).count())/1000 << std::endl;
             #endif
 
@@ -92,6 +95,7 @@ namespace lh{
                     
               #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
+                encoding_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000);
                 std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000 << std::endl;
               #endif
 
@@ -136,7 +140,6 @@ namespace lh{
                     std::string doc_id = doc_id_score_pair.first;
                     auto score = doc_id_score_pair.second;
                     const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
-                   
                     trec_file << formatted_line;
                     rank++;
                 }
@@ -148,6 +151,7 @@ namespace lh{
 
             #ifdef PRFILE_CQ
                 auto end_scoring = std::chrono::system_clock::now();
+                scoring_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_scoring-begin_scoring).count())/1000);
                 std::cout<<"total scoring time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_scoring-begin_scoring).count())/1000 << std::endl;
             #endif
 
@@ -156,28 +160,40 @@ namespace lh{
             query_doc_emb_approx_map->clear();
             delete query_doc_emb_approx_map;
 
-            for (auto& kv1 : *fetched_codes) {
-                for (auto& kv2 : *kv1.second) {
+            for (auto& kv1 : *fetched_codes)
+            {
+                for (auto& kv2 : *kv1.second) 
+                {
                     if (! IN_MEMORY_CODES)
                     {
                         for (auto* ptr : *kv2.second) 
                             delete ptr;
                     }
-                    
+                    cout << "Free level 2" << endl;
                     delete kv2.second;
                 }
+                    
+                cout << "Free level 1" << endl;
                 delete kv1.second;
             }
-
+            cout << "Free level 0" << endl;
             delete fetched_codes;
             
             offset += PRE_BATCH_SIZE;
+
+            #ifdef PRFILE_CQ
+                cout << "Average times" << endl;
+                cout << "Fetch time: " << accumulate(fetch_times.begin(), fetch_times.end(), 0) / fetch_times.size() << endl;
+                cout << "Decoding time: " << accumulate(decoding_times.begin(), decoding_times.end(), 0) / decoding_times.size() << endl;
+                cout << "Encoding time: " << accumulate(encoding_times.begin(), encoding_times.end(), 0) / encoding_times.size() << endl;
+                cout << "Scoring time: " << accumulate(scoring_times.begin(), scoring_times.end(), 0) / scoring_times.size() << endl;
+            #endif
         }
 
-          #ifdef PRFILE_CQ
+        #ifdef PRFILE_CQ
                 auto end = std::chrono::system_clock::now();
                 std::cout<<"total execution time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())/1000 << std::endl;
-         #endif
+        #endif
 
     }
 }
