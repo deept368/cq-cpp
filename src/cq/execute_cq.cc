@@ -45,7 +45,9 @@ namespace lh{
         #endif
 
         //open trec file
-        std::ofstream trec_file("../output/results.trec");
+        std::ofstream trec_file(OUTPUT_FILE);
+
+        auto original_scores = query_processor_->getOriginalScores();
 
 
         int offset = 0;
@@ -135,6 +137,10 @@ namespace lh{
                 for (auto& doc_id_score_pair : *doc_id_score_vec) {
                     std::string doc_id = doc_id_score_pair.first;
                     auto score = doc_id_score_pair.second;
+                    
+                    if (AVERAGE_SCORE)
+                        score = (score + original_scores[query_id][doc_id]) / 2;
+                    
                     const std::string formatted_line = format_trec_line(query_id, doc_id, rank, score, "cq_rerank");
                    
                     trec_file << formatted_line;
