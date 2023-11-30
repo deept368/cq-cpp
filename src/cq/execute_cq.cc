@@ -162,21 +162,17 @@ namespace lh{
 
             for (auto& kv1 : *fetched_codes)
             {
-                for (auto& kv2 : *kv1.second) 
+                if (! IN_MEMORY_CODES)
                 {
-                    if (! IN_MEMORY_CODES)
+                    for (auto& kv2 : *kv1.second) 
                     {
-                        for (auto* ptr : *kv2.second) 
-                            delete ptr;
+                            for (auto* ptr : *kv2.second) 
+                                delete ptr;
+                        delete kv2.second;
                     }
-                    cout << "Free level 2" << endl;
-                    delete kv2.second;
-                }
-                    
-                cout << "Free level 1" << endl;
+                }  
                 delete kv1.second;
             }
-            cout << "Free level 0" << endl;
             delete fetched_codes;
             
             offset += PRE_BATCH_SIZE;
