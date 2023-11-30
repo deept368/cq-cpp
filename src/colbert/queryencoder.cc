@@ -1,8 +1,5 @@
 #include "queryencoder.h"
-#include <torch/torch.h>
-#include <iostream>
-#include <chrono>
-#include "../utils.h"
+
 
 using namespace std;
 
@@ -13,7 +10,16 @@ namespace lh{
         query_maxlen = QUERY_MAXLEN;
         hidden_size_ = HIDDEN_SIZE;
         dimension_size_ = DIMENSION_SIZE;
-        bert_compute_ = new BertCompute<T>();
+
+        if (USE_BECR)
+        {
+            becr_compute_ = new BecrCompute();
+        }
+        else
+        {
+            bert_compute_ = new BertCompute<T>();
+        }
+        
 
         torch::Tensor* linear_layer_weight_tensor = new torch::Tensor();
         torch::load(*linear_layer_weight_tensor, "../model/colbert_linear_layer_weights.pt");
@@ -23,8 +29,16 @@ namespace lh{
 
     template<class T>
     QueryEncoder<T>::~QueryEncoder(){
-        delete bert_compute_; 
-        delete linear_model_; 
+        if (USE_BECR)
+        {
+            delete becr_compute_;
+        }
+        else
+        {
+            delete bert_compute_; 
+            delete linear_model_; 
+        }
+        
     }    
 
     /**
@@ -41,21 +55,28 @@ namespace lh{
         
         //bert embeddings are computed for all the query strings and converted to tensor
         std::size_t batch_size = input_strings->size();
-        std::vector<T>* vec_bert_output= bert_compute_->compute(input_strings, true);
+        if (USE_BECR)
+        {
+            auto output= becr_compute_->compute(input_strings);
+            auto normalised_output = torch::nn::functional::normalize(output,
+                                torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));
+            
+            return normalised_output;
+        }
         
+        std::vector<T>* vec_output= bert_compute_->compute(input_strings, true);
         auto options = torch::TensorOptions().dtype(TORCH_DTYPE);
-        auto bert_output_tensor = torch::from_blob(vec_bert_output->data(),
-                                  {1, int(vec_bert_output->size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
- 
+        auto bert_output_tensor = torch::from_blob(vec_output->data(),
+                                {1, int(vec_output->size())}, options).view({(std::int64_t)batch_size, (std::int64_t)query_maxlen, (std::int64_t)hidden_size_});
+
         //linear model is loaded and bert_output is passed through the linear layer to reduce dim size from 768 to 128
-        auto linear_output = linear_model_->forward(bert_output_tensor);
+        auto output = linear_model_->forward(bert_output_tensor);
+        delete vec_output;
 
         //finally, linear_ouptut is normalised and returned
-        auto normalised_output = torch::nn::functional::normalize(linear_output,
-                                 torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
-                                 
-        delete vec_bert_output;
-    
+        auto normalised_output = torch::nn::functional::normalize(output,
+                                torch::nn::functional::NormalizeFuncOptions().p(2).dim(2));  
+        
         return normalised_output;
     }
     

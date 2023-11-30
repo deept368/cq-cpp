@@ -1,94 +1,117 @@
-// std::vector<std::vector<std::string>>* input_tokens = new std::vector<std::vector<std::string>>(curr_batch_size);
-//         for (std::size_t i = 0; i < curr_batch_size; i++){
-//             tokenizer_->tokenize((*input_string)[i].c_str(), &(*input_tokens)[i], query_maxlen);
-//             if(isQuery){
-//                 (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[unused0]");
-//             }
-//             (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[CLS]");    
-//             (*input_tokens)[i].push_back("[SEP]");
-//         }
-
-
 #include "becrcompute.h"
-#include <fstream>
-#include <iostream>
-#include <chrono>
 
 namespace lh{
    
-    template<class T>
-    BecrCompute<T>::BecrCompute(){
-        // Model model;
-        // Graph<float> graph;
-        // std::fstream input("../model/model.proto", std::ios::in | std::ios::binary);
-        // if (!model.ParseFromIstream(&input)) {
-        //     throw std::invalid_argument("can not read protofile");
-        // }
-        // for (std::size_t i = 0; i < model.param_size(); i++){
-        //     Model_Paramter paramter = model.param(i);
-        //     int size = 1;
-        //     std::vector<std::size_t> dims(paramter.n_dim());
-        //     for (int j = 0; j < paramter.n_dim(); j++)
-        //     {
-        //         int dim = paramter.dim(j);
-        //         size *= dim;
-        //         dims[j] = dim;
-        //     }
-        //     float *data = new float[size];
-        //     for (int i = 0; i < size; i++) {
-        //         data[i] = paramter.data(i);
-        //     }
-        //     graph[paramter.name()] = make_pair(dims, data);
-        // }
-        // google::protobuf::ShutdownProtobufLibrary();
-        // std::cout << "Successfully loaded parameters from protobuf!" << std::endl;
-
-        // size_t pre_batch_size = PRE_BATCH_SIZE;
-        // size_t pre_seq_len = 512;
-        // size_t num_heads = 12;
-        // size_t head_hidden_size = 64;
-        // size_t intermediate_ratio = 4;
-        // size_t num_layers = 12;
-
-        // hidden_size_ = HIDDEN_SIZE;
+    BecrCompute::BecrCompute(){
+        vocab_size_ = VOCAB_SIZE;
         query_maxlen = QUERY_MAXLEN;
-
-        // std::vector<std::string> names;
-        // names.push_back("bert.embeddings.word_embeddings.weight");
-        // names.push_back("bert.embeddings.position_embeddings.weight");
-        // names.push_back("bert.embeddings.token_type_embeddings.weight");
-        // names.push_back("bert.embeddings.LayerNorm.gamma");
-        // names.push_back("bert.embeddings.LayerNorm.beta");
-        // for (std::size_t idx; idx < num_layers; idx++){
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.query.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.query.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.key.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.key.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.value.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.self.value.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.output.dense.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.output.dense.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.output.LayerNorm.gamma");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".attention.output.LayerNorm.beta");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".intermediate.dense.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".intermediate.dense.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".output.dense.weight");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".output.dense.bias");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".output.LayerNorm.gamma");
-        //     names.push_back("bert.encoder.layer." + std::to_string(idx) + ".output.LayerNorm.beta");
-        // }
-        // names.push_back("bert.pooler.dense.weight");
-        // names.push_back("bert.pooler.dense.bias");
+        dimension_size_ = DIMENSION_SIZE;
+        pad_token_id_ = PAD_TOKEN_ID; 
 
         // bert_ = new Bert<T>(names, graph, pre_batch_size, pre_seq_len, hidden_size_, num_heads, head_hidden_size, intermediate_ratio, num_layers);
         tokenizer_ = new FullTokenizer("../model/vocab.txt");
 
-        std::cout << "Init model from protobuf file and tokenizer successfully!" << std::endl;
+        // //static embedding is fetched for all the vocabulary from a .pt file into a tensor [30522(vocab_size) * 128(embedding_dim)]
+        // torch::Tensor* static_embeddings = new torch::Tensor();
+        // torch::load(*static_embeddings, "../model/non_contextual_embeddings.pt");
+
+        //  //torch::nn::EmbeddingImpl(PyTorch C++) model is initialised and static_embeddings tensor is loaded as pretrained weight. 
+        // auto embedding_options = torch::nn::EmbeddingOptions(vocab_size_, dimension_size_).padding_idx(pad_token_id_)._weight(*static_embeddings);
+        // non_contextual_embedding = new torch::nn::EmbeddingImpl(embedding_options);
+
+        // cout << "Successfully loaded unigrams" << endl;
+
+
+        // // Load data from a JSON file
+        // std::ifstream bigram_file("path/to/bigram_mapping_emb_dict.json");
+        // std::string bigram_str((std::istreambuf_iterator<char>(bigram_file)), std::istreambuf_iterator<char>());
+        // std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float>>> bigram_emb = torch::data::serialization::fromJSON<std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float>>>>(bigram_str);
+
+
+        unigram_emb = new torch::Tensor();
+        torch::load(*unigram_emb, "../model/non_contextual_embeddings.pt");
+        // std::ifstream bigram_file("../../bigram_mapping_emb_dict.json");
+        // bigram_file >> bigram_emb;
+        cout << "Successfully loaded unigram embeddings." << endl;
+
+        // Load data from a JSON file
+        std::ifstream file("../data/bigram_mapping_emb_dict.json");
+        if (!file.is_open()) {
+            std::cerr << "Error opening the JSON file" << std::endl;
+        }
+
+        try {
+            // Parse JSON from the file
+            json j;
+            file >> j;
+
+            // Extract data and populate your data structure
+            bigram_emb = j.get<decltype(bigram_emb)>();
+        } catch (const std::exception& e) {
+            std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+        }
+    
+        std::cout << "Size of bigram_emb: " << bigram_emb.size() << std::endl;
+        // auto sample = bigram_emb["9440"]["1998"];
+        // for (auto& l: sample)
+        // {
+        //     cout << "New line: " << endl;
+        //     for (auto val: l)
+        //         cout << val << " ";
+        //     cout << endl;
+        // }
+
+        // // Print keys of bigram_emb (first 10 keys)
+        // int count = 0;
+        // std::cout << "Keys of bigram_emb: ";
+        // for (const auto& key : bigram_emb) {
+        //     if (count < 10) {
+        //         std::cout << key.first << " ";
+        //         count++;
+        //     } else {
+        //         break;
+        //     }
+        // }
+        // std::cout << std::endl;
+
+        // Access the first element in bigram_emb
+        // auto first = bigram_emb.begin()->second;
+        // std::cout << "Size of first: " << first.size() << std::endl;
+
+        // // Access the second element in first
+        // auto second = first.begin()->second;
+        // std::cout << "Size of second: " << second.size() << std::endl;
+
+        // // Print the first 10 keys of second
+        // count = 0;
+        // std::cout << "Keys of second: ";
+        // for (const auto& key : first) {
+        //     if (count < 10) {
+        //         std::cout << key.first << " ";
+        //         count++;
+        //     } else {
+        //         break;
+        //     }
+        // }
+        // std::cout << std::endl;
+
+        // // Print the sizes of the first two vectors in second
+        // if (!second.empty()) {
+        //     std::cout << "Size of the first vector in second: " << second[0].size() << std::endl;
+        //     std::cout << "Size of the second vector in second: " << second[1].size() << std::endl;
+        // }
+
+        // // Print the values of second
+        // std::cout << "Values of second: " << second[0][0] << ", " << second[1][0] << std::endl;
+
+
+        cout << "Successfully loaded bigram embeddings." << endl;
+
     }
 
-    template<class T>
-    BecrCompute<T>::~BecrCompute(){
-        
+    BecrCompute::~BecrCompute(){
+        delete non_contextual_embedding;
+        delete unigram_emb;
         delete tokenizer_;
         
     }    
@@ -97,11 +120,9 @@ namespace lh{
      Computes the BERT embedding of given input strings. Treats query and document differently. Currently support is ony added 
      for queries as this is only required for CQ.
      @param input_string the input strings to encode
-     @param isQuery whether the input strings are queries or documents
      @return linear a vector containing the BERT embeddings of the input strings of size (BATCH_SIZE * QUERY_MAXLEN * HIDDEN_DIM_SIZE(768)) 
     */
-    template<class T>
-    std::vector<T>* BecrCompute<T>::compute(std::vector<std::string>* input_string, bool isQuery){
+    torch::Tensor BecrCompute::compute(std::vector<std::string>* input_string){
         
         //computing the batch size
         int curr_batch_size = input_string->size();
@@ -110,9 +131,6 @@ namespace lh{
         std::vector<std::vector<std::string>>* input_tokens = new std::vector<std::vector<std::string>>(curr_batch_size);
         for (std::size_t i = 0; i < curr_batch_size; i++){
             tokenizer_->tokenize((*input_string)[i].c_str(), &(*input_tokens)[i], query_maxlen);
-            if(isQuery){
-                (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[unused0]");
-            }
             (*input_tokens)[i].insert((*input_tokens)[i].begin(), "[CLS]");    
             (*input_tokens)[i].push_back("[SEP]");
         }
@@ -128,35 +146,60 @@ namespace lh{
 
         //token ids are computed using tokens. vocab.txt is used for the same.
         uint64_t* input_ids = new uint64_t[curr_batch_size * query_maxlen];
-        uint64_t* position_ids = new uint64_t[curr_batch_size * query_maxlen];
-        uint64_t* type_ids = new uint64_t[curr_batch_size * query_maxlen];
-        for (std::size_t i = 0; i < curr_batch_size; i++){
+        for (std::size_t i = 0; i < curr_batch_size; i++)
             tokenizer_->convert_tokens_to_ids((*input_tokens)[i], input_ids + i * query_maxlen);
-            for (int j = 0; j < query_maxlen; j++){
-                position_ids[i * query_maxlen + j] = j;
-                type_ids[i * query_maxlen + j] = 0;
+        
+        std::vector<string>* tokens = new std::vector<string>(curr_batch_size * query_maxlen);
+        for (std::size_t i = 0; i < curr_batch_size * query_maxlen; ++i) {
+            (*tokens)[i] = to_string(input_ids[i]);
+        }
+
+
+        // Initialize representations and weights
+        torch::Tensor reps = torch::Tensor(torch::zeros({static_cast<long>(tokens->size()), dimension_size_}));
+        torch::Tensor weights = torch::ones({static_cast<long>(tokens->size())}) / (1 + static_cast<long>(tokens->size()));
+
+        // Update representations and weights using bigram embeddings
+        for (int i = 0; i < static_cast<int>(tokens->size()); ++i)
+        {
+            for (int j = i + 1; j < std::min(static_cast<int>(tokens->size()), i + WINDOW_SIZE); ++j)
+            {
+                auto it1 = bigram_emb.find((*tokens)[i]);
+                if (it1 != bigram_emb.end())
+                {
+                    auto it2 = it1->second.find((*tokens)[j]);
+                    if (it2 != it1->second.end())
+                    {
+                        auto temp = torch::tensor(it2->second[0]) / (j - i);
+                        reps[i] += torch::tensor(it2->second[0]) / (j - i);
+                        reps[j] += torch::tensor(it2->second[1]) / (j - i);
+                        weights[i] += 1 / (j - i);
+                        weights[j] += 1 / (j - i);
+                    }
+                }
             }
         }
-        
-        //bert compute is called to generate the embeddings. output is stored in 1-d array seq_output, size: batch_size*query_maxlen*768(hidden_dim)
-        std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
-        T* pool_output_ = new T[curr_batch_size * hidden_size_];  
-        T* seq_output_= new T[size];    
 
-        bert_->compute(curr_batch_size, query_maxlen, input_ids, position_ids, type_ids, mask, seq_output_, pool_output_);
-        //array output is converted to vector before returning 
-        vector<T>* result = convert_to_vector(seq_output_, size);
+        // Normalize weights
+        weights = 1 / weights;
 
-        delete[] mask;
+        // Compute the final representation
+        // reps = weights.unsqueeze(1) * reps;
+
+        reps = reps.view({-1, dimension_size_});
+
+        // Compute the final representation
+        reps = weights.view({-1, 1}) * reps;
+
+        // Reshape the final tensor to have the correct batch size
+        reps = reps.view({curr_batch_size, -1, dimension_size_});
+  
+
         delete[] input_ids;
-        delete[] position_ids;
-        delete[] type_ids;
-        delete[] seq_output_;
-        delete[] pool_output_;
         delete input_tokens;
+        delete tokens;
 
-        return result;
-        
+        // reps = reps.unsqueeze(0);
+        return reps;
     }
-    template class BertCompute<float>;
 }

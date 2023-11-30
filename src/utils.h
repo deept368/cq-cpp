@@ -111,9 +111,6 @@ namespace lh {
         ss << query_id << " Q0 " << doc_id << " " << rank << " " << score << " " << run_id << std::endl;
         return ss.str();
     }
-
-
-
 }
 
 #endif //UTILS_H

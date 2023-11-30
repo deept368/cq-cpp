@@ -17,7 +17,7 @@
 #define CODEBOOK_DIM 8
 
 // #define QUERY_FILE "../data/queries.dev.tsv"
-// #define RESULTS_FILE "../data/retrieval-results.tsv"
+// #define RESULTS_FILE "../data/retrieval-results-test.tsv"
 
 // #define QUERY_FILE "../data/msmarco-test2019-queries-qrel.tsv"
 // #define RESULTS_FILE "../data/retrieval-results.tsv"
@@ -34,7 +34,11 @@
 #define PRE_BATCH_SIZE 100
 #define TOTAL_QUERIES 698000
 
+// #define PRE_BATCH_SIZE 1
+// #define TOTAL_QUERIES 1
+
 #define USE_BECR false
+#define WINDOW_SIZE 3
 #define AVERAGE_SCORE false
 
 #endif
