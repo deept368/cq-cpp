@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include <iostream>
 
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
+
 namespace lh{
     void load_vocab(const char *vocab_file, std::unordered_map<std::string, uint64_t> *vocab);
 
@@ -146,3 +149,5 @@ namespace lh{
         WordpieceTokenizer *wordpiece_tokenizer;
     };
 }
+
+#endif

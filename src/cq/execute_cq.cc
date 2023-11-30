@@ -61,7 +61,7 @@ namespace lh{
 
             unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
-             #ifdef PRFILE_CQ
+            #ifdef PRFILE_CQ
                 auto end_fetch = std::chrono::system_clock::now();
                 fetch_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000);
                 std::cout<<"total fetch time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_fetch-begin_fetch).count())/1000 << std::endl;
@@ -89,19 +89,17 @@ namespace lh{
 
             //query input_strings are encoded
 
-              #ifdef PRFILE_CQ
+            #ifdef PRFILE_CQ
                 auto begin_encoding = std::chrono::system_clock::now();
-              #endif
-                   
-                auto Q_all = query_encoder_->encode(input_strings);
-                    
-              #ifdef PRFILE_CQ
+            #endif
+                
+            auto Q_all = query_encoder_->encode(input_strings);
+
+            #ifdef PRFILE_CQ
                 auto end_encoding = std::chrono::system_clock::now();
                 encoding_times.push_back((std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000);
                 std::cout<<"total query encoding time in milli-seconds "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_encoding-begin_encoding).count())/1000 << std::endl;
-              #endif
-
-            cout<<"encoded"<<endl;
+            #endif
 
             std::size_t idx = 0;
 

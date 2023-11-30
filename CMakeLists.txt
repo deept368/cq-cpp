@@ -7,7 +7,7 @@ cmake_policy(SET CMP0074 OLD)
 set(CMAKE_BUILD_TYPE Release)
 #SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
 option(PROFILE_ENABLE "Enable profile" ON)
-file(GLOB DIR_SRCS src/bert/*.cc src/colbert/*.cc src/cq/*.cc)
+file(GLOB DIR_SRCS src/becr/*.cc src/bert/*.cc src/colbert/*.cc src/cq/*.cc)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 

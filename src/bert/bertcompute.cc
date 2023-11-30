@@ -127,7 +127,7 @@ namespace lh{
                 type_ids[i * query_maxlen + j] = 0;
             }
         }
-        
+
         //bert compute is called to generate the embeddings. output is stored in 1-d array seq_output, size: batch_size*query_maxlen*768(hidden_dim)
         std::size_t size = curr_batch_size * query_maxlen * hidden_size_;
         T* pool_output_ = new T[curr_batch_size * hidden_size_];  

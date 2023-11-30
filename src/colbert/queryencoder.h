@@ -1,5 +1,10 @@
+#include <torch/torch.h>
+#include <iostream>
+#include <chrono>
+#include "../utils.h"
+#include "../config.h"
 #include "../bert/bertcompute.h"
-
+#include "../becr/becrcompute.h"
 
 
 namespace lh{
@@ -21,6 +26,7 @@ namespace lh{
             std::size_t dimension_size_;
 
             BertCompute<T>* bert_compute_;
+            BecrCompute* becr_compute_;
             torch::nn::LinearImpl* linear_model_;
             
     };
