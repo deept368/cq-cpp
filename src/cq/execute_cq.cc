@@ -9,19 +9,19 @@ using namespace std;
 namespace lh{
     
     ExecuteCQ::ExecuteCQ(){
-       decoder_ = new Decoder();
-       query_encoder_ = new QueryEncoder<float>();
-       score_ = new Score();
-       query_mapping_ = new QueryMapping();
+    //    decoder_ = new Decoder();
+    //    query_encoder_ = new QueryEncoder<float>();
+    //    score_ = new Score();
+    //    query_mapping_ = new QueryMapping();
        query_processor_ = new QueryProcessor();
     }
 
   
     ExecuteCQ::~ExecuteCQ(){
-       delete decoder_;
-       delete query_encoder_;
-       delete score_;
-       delete query_mapping_;
+    //    delete decoder_;
+    //    delete query_encoder_;
+    //    delete score_;
+    //    delete query_mapping_;
        delete query_processor_;
     }    
 
@@ -47,7 +47,9 @@ namespace lh{
         //open trec file
         std::ofstream trec_file(OUTPUT_FILE);
 
+        
         auto original_scores = query_processor_->getOriginalScores();
+        cout << "Number of queries" << original_scores.size() << endl;
 
 
         int offset = 0;
@@ -59,7 +61,8 @@ namespace lh{
                 auto begin_fetch = std::chrono::system_clock::now();
             #endif
 
-            unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
+            // cout << "Reach 1\n";
+            unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
             #ifdef PRFILE_CQ
                 auto end_fetch = std::chrono::system_clock::now();
@@ -70,6 +73,20 @@ namespace lh{
             #ifdef PRFILE_CQ
                 auto begin_decoding = std::chrono::system_clock::now();
             #endif
+
+            // for (const auto& entry : *query_doc_emb_approx_map)
+            // {
+            //     int key = entry.first;
+            //     auto& inner_map = entry.second;
+
+            //     for (const auto& inner_entry : inner_map) {
+            //         const std::string& inner_key = inner_entry.first;
+            //         const auto& data_vector = inner_entry.second;
+
+            //         // Convert data_vector to torch::Tensor manually
+            //         // Example: torch::Tensor tensor_data = convertToTensor(data_vector);
+            //     }
+            // }
 
             //approx document embeddings are retrieved for topK documents for each query
             map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
@@ -170,8 +187,8 @@ namespace lh{
                 {
                     for (auto& kv2 : *kv1.second) 
                     {
-                            for (auto* ptr : *kv2.second) 
-                                delete ptr;
+                            for (auto ptr : *kv2.second) 
+                                delete ptr.second;
                         delete kv2.second;
                     }
                 }  

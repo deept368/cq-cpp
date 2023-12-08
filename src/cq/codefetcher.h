@@ -7,6 +7,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include <cstdint>
 #include "../config.h"
 
 using namespace std;
@@ -20,14 +21,14 @@ namespace lh{
             int number_of_files;
             vector<ifstream *>* file_ptrs;
             unordered_map<string, int>* key_offset_store;
-            unordered_map<string, vector<vector<int>*>*>* codes_store;
+            unordered_map<string, vector< pair<uint16_t, vector<uint8_t>*> >*>* codes_store;
             int total_docs;
     
         public:
             // Constructor
             CodeFetcher();
             ~CodeFetcher();
-            unordered_map<string, vector<vector<int>*>*>* get_codes(vector<string>* document_ids);
+            unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>* get_codes(vector<string>* document_ids);
     };
 }
 

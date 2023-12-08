@@ -49,13 +49,11 @@ namespace lh
     }   
     
 
-    unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* QueryProcessor::getCodes(int offset)
+    unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* QueryProcessor::getCodes(int offset)
     {
-        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* code_map = new unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>();
-       
-
+        unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* code_map = new unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>();
         int batch_size = PRE_BATCH_SIZE;
-
+        
         auto it = queryResults->begin();
         std::advance(it, offset);
         cout<<"offset is "<<offset<<endl;
@@ -65,10 +63,9 @@ namespace lh
 
             cout << "Now processing for query: " << query_id << " " << i << endl;
 
-            unordered_map<string, vector<vector<int>*>*>* codes = code_fetcher->get_codes(it->second);
+            unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>* codes = code_fetcher->get_codes(it->second);
             code_map->insert(make_pair(query_id, codes));
         }
-       
         return code_map;
     }
 
