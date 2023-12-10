@@ -83,7 +83,7 @@ namespace lh{
         int query_counter = 0;
         for (auto&  query_doc_pairs : *fetched_codes) {
             int query_id = query_doc_pairs.first;
-            cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
+            // cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
             unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
             //we loop over a single document for all the topK documents for one query string
