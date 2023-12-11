@@ -31,7 +31,7 @@
 #define STORE_SIZE 256
 
 
-#define PRE_BATCH_SIZE 100
+#define PRE_BATCH_SIZE 1
 #define TOTAL_QUERIES 698000
 
 // #define PRE_BATCH_SIZE 1

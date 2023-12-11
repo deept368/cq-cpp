@@ -22,7 +22,7 @@ namespace lh{
     public:
         QueryProcessor();
         ~QueryProcessor();
-        unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* getCodes(int offset);
+        unordered_map<int, unordered_map<string, vector<vector<uint16_t>*>*>*>* getCodes(int offset);
         const unordered_map<int, unordered_map<string, float>>& getOriginalScores();
        
     };

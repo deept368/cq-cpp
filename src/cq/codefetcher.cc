@@ -25,7 +25,7 @@ namespace lh{
         number_of_files = STORE_SIZE;
         key_offset_store = new unordered_map<string, int>();
         file_ptrs = new vector<ifstream *>();
-        codes_store = new unordered_map<string, vector<vector<int>*>*>();
+        codes_store = new unordered_map<string, vector<vector<uint16_t>*>*>();
         
         for (int i = 0; i < number_of_files; i++) {
             (*file_ptrs).push_back(new ifstream(base_filename + to_string(i), ios::binary));
@@ -67,7 +67,7 @@ namespace lh{
                         // cout << "Document id code fetch: " << j << std::endl;
                         string doc_id = to_string(256*(j) + i);
                         int token_id = -1;
-                        vector<vector<int>*>* doc_data = new vector<vector<int>*>();
+                        vector<vector<uint16_t>*>* doc_data = new vector<vector<uint16_t>*>();
                         // cout << "REACHED Document id " << (*key_offset_store)[doc_id] << std::endl;
                         // infile.seekg((*key_offset_store)[doc_id] / 8, ios::beg);
                         
@@ -76,7 +76,7 @@ namespace lh{
                             infile.read(buffer, 18);
 
                             token_id = ntohs(*(reinterpret_cast<int*>(buffer)));
-                            vector<int>* token_data = new vector<int>();
+                            vector<uint16_t>* token_data = new vector<uint16_t>();
                             token_data->push_back(token_id);
                             for (int i = 2; i < 18; i++){
                                 token_data->push_back((unsigned char)buffer[i]);
@@ -107,13 +107,13 @@ namespace lh{
         delete key_offset_store;
     }
 
-    unordered_map<string, vector<vector<int>*>*>* CodeFetcher::get_codes(vector<string>* document_ids){
+    unordered_map<string, vector<vector<uint16_t>*>*>* CodeFetcher::get_codes(vector<string>* document_ids){
         // read document data
         // doc_data_map -> (doc id (as string), list of tokens in a document where for each token, we have [token id + 16 codes for each token])
-        unordered_map<string, vector<vector<int>*>*>* doc_data_map = new unordered_map<string, vector<vector<int>*>*>();
+        unordered_map<string, vector<vector<uint16_t>*>*>* doc_data_map = new unordered_map<string, vector<vector<uint16_t>*>*>();
 
         for (auto& doc_id : *document_ids){
-            vector<vector<int>*>* doc_data = new vector<vector<int>*>();
+            vector<vector<uint16_t>*>* doc_data = new vector<vector<uint16_t>*>();
             if (IN_MEMORY_CODES) {
                 doc_data = (*codes_store)[doc_id];
             }
@@ -129,7 +129,7 @@ namespace lh{
                     file.read(buffer, 18);
 
                     token_id = ntohs(*(reinterpret_cast<int* >(buffer)));
-                    vector<int>* token_data = new vector<int>();
+                    vector<uint16_t>* token_data = new vector<uint16_t>();
                     token_data->push_back(token_id);
                     for (int i = 2; i < 18; i++){
                         token_data->push_back((unsigned char)buffer[i]);

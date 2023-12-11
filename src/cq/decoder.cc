@@ -70,7 +70,7 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes){
+     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<uint16_t>*>*>*>* fetched_codes){
    
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
@@ -84,12 +84,12 @@ namespace lh{
         for (auto&  query_doc_pairs : *fetched_codes) {
             int query_id = query_doc_pairs.first;
             cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
-            unordered_map<string, vector<vector<int>*>*>* document_to_codes_map = query_doc_pairs.second;
+            unordered_map<string, vector<vector<uint16_t>*>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
-                vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
+                vector<vector<uint16_t>*>* codes_vec = doc_codes_pairs.second;
 
                 float code_approx[codes_vec->size()][128];
 

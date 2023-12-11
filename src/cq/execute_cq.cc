@@ -59,7 +59,7 @@ namespace lh{
                 auto begin_fetch = std::chrono::system_clock::now();
             #endif
 
-            unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
+            unordered_map<int, unordered_map<string, vector<vector<uint16_t>*>*>*>* fetched_codes = query_processor_->getCodes(offset);
             
             #ifdef PRFILE_CQ
                 auto end_fetch = std::chrono::system_clock::now();
