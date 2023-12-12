@@ -71,17 +71,24 @@ namespace lh{
                         // cout << "REACHED Document id " << (*key_offset_store)[doc_id] << std::endl;
                         // infile.seekg((*key_offset_store)[doc_id] / 8, ios::beg);
                         
-                        while (token_id != 102){
-                            char buffer[18];
-                            infile.read(buffer, 18);
-
-                            token_id = ntohs(*(reinterpret_cast<int*>(buffer)));
+                        char buffer[3600];
+                        infile.read(buffer, 3600);
+                        const int bytesNeeded = 2 + CODEBOOK_COUNT;
+                        char tempBuffer[bytesNeeded];
+                        int curr_index = 0;
+                        while ((curr_index < 3600 - bytesNeeded + 1) && (token_id != 102)){
+                            for (int i = 0; i < bytesNeeded; ++i) {
+                                tempBuffer[i] = buffer[curr_index + i];
+                            }
+                            token_id = ntohs(*(reinterpret_cast<uint16_t* >(tempBuffer)));
                             vector<uint16_t>* token_data = new vector<uint16_t>();
                             token_data->push_back(token_id);
                             for (int i = 2; i < 18; i++){
                                 token_data->push_back((unsigned char)buffer[i]);
                             }
                             doc_data->push_back(token_data);
+                            // cout << "Doc size: " << doc_data->size() << endl;
+                            curr_index += bytesNeeded;
                         }
                         
                         
@@ -124,18 +131,35 @@ namespace lh{
                 file.seekg(bit_offset / 8, ios::beg);
                 int token_id = -1;
 
-                while (token_id != 102){
-                    char buffer[18];
-                    file.read(buffer, 18);
+                // #ifdef PRFILE_CQ
+                //     auto begin_time = std::chrono::system_clock::now();
+                // #endif
 
-                    token_id = ntohs(*(reinterpret_cast<int* >(buffer)));
+                char buffer[3600];
+                file.read(buffer, 3600);
+                const int bytesNeeded = 2 + CODEBOOK_COUNT;
+                char tempBuffer[bytesNeeded];
+                int curr_index = 0;
+                while ((curr_index < 3600 - bytesNeeded + 1) && (token_id != 102)){
+                    for (int i = 0; i < bytesNeeded; ++i) {
+                        tempBuffer[i] = buffer[curr_index + i];
+                    }
+                    token_id = ntohs(*(reinterpret_cast<uint16_t* >(tempBuffer)));
                     vector<uint16_t>* token_data = new vector<uint16_t>();
                     token_data->push_back(token_id);
                     for (int i = 2; i < 18; i++){
                         token_data->push_back((unsigned char)buffer[i]);
                     }
                     doc_data->push_back(token_data);
+                    // cout << "Doc size: " << doc_data->size() << endl;
+                    curr_index += bytesNeeded;
                 }
+
+                
+                // #ifdef PRFILE_CQ
+                //     auto end_time = std::chrono::system_clock::now();
+                //     std::cout<<"total time: "<< (std::chrono::duration_cast<std::chrono::microseconds>(end_time-begin_time).count()) << std::endl;
+                // #endif
             }
             
             doc_data_map->insert(make_pair(doc_id, doc_data));

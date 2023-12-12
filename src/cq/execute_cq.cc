@@ -181,13 +181,14 @@ namespace lh{
             
             offset += PRE_BATCH_SIZE;
 
-            #ifdef PRFILE_CQ
-                cout << "Average times" << endl;
-                cout << "Fetch time: " << accumulate(fetch_times.begin(), fetch_times.end(), 0) / fetch_times.size() << endl;
-                cout << "Decoding time: " << accumulate(decoding_times.begin(), decoding_times.end(), 0) / decoding_times.size() << endl;
-                cout << "Encoding time: " << accumulate(encoding_times.begin(), encoding_times.end(), 0) / encoding_times.size() << endl;
-                cout << "Scoring time: " << accumulate(scoring_times.begin(), scoring_times.end(), 0) / scoring_times.size() << endl;
-            #endif
+            // #ifdef PRFILE_CQ
+            //     cout << "Average times" << endl;
+            //     cout << "Fetch time: " << accumulate(fetch_times.begin(), fetch_times.end(), 0) / fetch_times.size() << endl;
+            //     cout << "Decoding time: " << accumulate(decoding_times.begin(), decoding_times.end(), 0) / decoding_times.size() << endl;
+            //     cout << "Encoding time: " << accumulate(encoding_times.begin(), encoding_times.end(), 0) / encoding_times.size() << endl;
+            //     cout << "Scoring time: " << accumulate(scoring_times.begin(), scoring_times.end(), 0) / scoring_times.size() << endl;
+            // #endif
+            cout << endl << endl;
         }
 
         #ifdef PRFILE_CQ
