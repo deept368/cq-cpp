@@ -32,7 +32,7 @@
 
 
 #define PRE_BATCH_SIZE 1
-#define TOTAL_QUERIES 698000
+#define TOTAL_QUERIES 6980
 
 // #define PRE_BATCH_SIZE 1
 // #define TOTAL_QUERIES 1
