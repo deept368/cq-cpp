@@ -70,7 +70,7 @@ namespace lh{
     @return A map of query input strings and the approx embedding tensor of their correpsonding topK documents.
     */
 
-     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* fetched_codes){
+     map<int, map<std::string,torch::Tensor>*>* Decoder::decode(unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* fetched_codes){
 
         /* 
         code_fetcher object is used to fetch a map of queries and their corresponding top K documents and (codes and tokens) of these topK documents.
@@ -83,13 +83,13 @@ namespace lh{
         int query_counter = 0;
         for (auto&  query_doc_pairs : *fetched_codes) {
             int query_id = query_doc_pairs.first;
-            // cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
-            unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>* document_to_codes_map = query_doc_pairs.second;
+            cout << "Processing for query: " << query_id << " " << query_counter++ << endl;
+            unordered_map<string, vector<vector<int>*>*>* document_to_codes_map = query_doc_pairs.second;
             map<std::string, torch::Tensor>* docId_emb_map = new map<std::string, torch::Tensor>();
             //we loop over a single document for all the topK documents for one query string
             for (auto& doc_codes_pairs : *document_to_codes_map) {
                 string doc_id = doc_codes_pairs.first;
-                vector<pair<uint16_t, vector<uint8_t>*>>* codes_vec = doc_codes_pairs.second;
+                vector<vector<int>*>* codes_vec = doc_codes_pairs.second;
 
                 float code_approx[codes_vec->size()][128];
 
@@ -97,9 +97,9 @@ namespace lh{
                 //we fetch the first code that is the token id for static embedding and save the first codes to form a token vector containing static embedding token ids 
                 int idx = 0;
                 for(auto& token_vec: *codes_vec){
-                    tokens->push_back(token_vec.first);
+                    tokens->push_back(token_vec->front());
                     for (int i = 0; i < 16; i++)
-                        memcpy(&(code_approx[idx][i*8]), &(codebook_vector[i*256*8 + (*token_vec.second)[i] * 8]), 8*sizeof(float));
+                        memcpy(&(code_approx[idx][i*8]), &(codebook_vector[i*256*8 + (*token_vec)[i+1] * 8]), 8*sizeof(float));
                         // code_approx[idx].slice(0, i*8, (i+1)*8) = 0;
                         // ((*codebook)[i])[(*token_vec)[i+1]]; // 8
                     // token_vec->erase(token_vec->begin());
@@ -108,8 +108,12 @@ namespace lh{
 
                 //convert static embedding token ids vector to a tensor and compute the static embedding for the document
                 auto token_tensor = torch::from_blob(tokens->data(), {(std::int64_t)tokens->size()}, torch::kInt);
+                cout << token_tensor.sizes() << endl;
+                cout << token_tensor << endl;
+                cout << "Reached 1\n";
                 auto static_embs = non_contextual_embedding->forward(token_tensor);
-                
+                cout << static_embs << endl;
+                cout << "Reached 2\n";
                 //compute the approx embeddings for the document using the codes and codebook
                 // auto* linear_codes_vec = linearize_vector_of_vectors(codes_vec);
                 // auto options_int = torch::TensorOptions().dtype(torch::kInt);
@@ -156,3 +160,4 @@ namespace lh{
         return query_doc_approx_emb_map;
     }
 }
+   

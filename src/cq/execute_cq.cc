@@ -7,6 +7,32 @@
 using namespace std;
 
 namespace lh{
+
+    void printConvertedCodes(const std::unordered_map<int, std::unordered_map<std::string, std::vector<std::vector<int>*>*>*>& converted_codes) {
+    for (const auto& outer_pair : converted_codes) {
+        int outer_key = outer_pair.first;
+        const auto& inner_map = outer_pair.second;
+
+        for (const auto& inner_pair : *inner_map) {
+            const std::string& inner_key = inner_pair.first;
+            const auto& inner_vector = *inner_pair.second;
+
+            std::cout << "Outer Key: " << outer_key << ", Inner Key: " << inner_key << ", Values: ";
+
+            for (const auto& inner_vector_ptr : inner_vector) {
+                const auto& converted_pair = *inner_vector_ptr;
+
+                std::cout << "[ ";
+                for (const auto& value : converted_pair) {
+                    std::cout << value << " ";
+                }
+                std::cout << "] ";
+            }
+
+            std::cout << std::endl;
+        }
+    }
+}
     
     ExecuteCQ::ExecuteCQ(){
     //    decoder_ = new Decoder();
@@ -49,13 +75,13 @@ namespace lh{
 
         
         auto original_scores = query_processor_->getOriginalScores();
-        cout << "Number of queries" << original_scores.size() << endl;
-
 
         int offset = 0;
 
         vector<int> fetch_times, decoding_times, encoding_times, scoring_times;
-        while(offset <= TOTAL_QUERIES / PRE_BATCH_SIZE){
+        while(offset <= TOTAL_QUERIES){
+
+            cout << "Offset is: " << offset << endl;
 
              #ifdef PRFILE_CQ
                 auto begin_fetch = std::chrono::system_clock::now();
@@ -88,8 +114,95 @@ namespace lh{
             //     }
             // }
 
+
+
+
             //approx document embeddings are retrieved for topK documents for each query
-            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(fetched_codes);
+            unordered_map<int, unordered_map<string, vector<vector<int>*>*>*>* converted_codes = new std::unordered_map<int, std::unordered_map<std::string, std::vector<std::vector<int>*>*>*>();;
+            for (auto& query_id_map: *fetched_codes)
+            {
+                converted_codes->insert(make_pair(query_id_map.first, new unordered_map<string, vector<vector<int>*>*>));
+                for (auto& doc_id_map: *(query_id_map.second))
+                {
+                    vector<pair<uint16_t, vector<uint8_t>*>>* data = doc_id_map.second;
+                    vector<vector<int>*>* curr_data = new vector<vector<int>*>();
+                    for (auto& codes: *data)
+                    {
+                        vector<int>* curr_vec = new vector<int>();
+                        curr_vec->push_back(static_cast<int>(codes.first));
+                        // cout << codes.first << " ";
+                        for (auto& code: *(codes.second))
+                        {
+                            curr_vec->push_back(static_cast<int>(code));
+                            // cout << static_cast<int>(code) << " ";
+                        }
+                        // cout << endl;
+                        curr_data->push_back(curr_vec);
+                    }
+
+                    
+                    (*converted_codes)[query_id_map.first]->insert(make_pair(doc_id_map.first,curr_data));
+                    // cout << "level 1\n";
+                }
+            // cout << "level 2\n";
+            }
+
+
+// // Converted_codes structure
+// std::unordered_map<int, std::unordered_map<std::string, std::vector<std::vector<int>*>*>*>* converted_codes;
+
+// // Iterate through fetched_codes and convert to converted_codes
+// for (auto outer_pair : *fetched_codes) {
+//     int outer_key = outer_pair.first;
+//     auto* inner_map = outer_pair.second;
+
+//     for (auto inner_pair : *inner_map) {
+//         string& inner_key = inner_pair.first;
+//         auto* inner_vector = inner_pair.second;
+
+//         // Create a new vector for converted_codes
+//         vector<vector<int>*>* converted_vector = new vector<vector<int>*>();
+
+//         // Iterate through the inner_vector and convert
+//         for (const auto& pair : inner_vector) {
+//             uint16_t first_value = pair.first;
+//             const auto& second_vector = *pair.second;
+
+//             // Create a new vector for the converted pair
+//             std::vector<int>* converted_pair = new std::vector<int>();
+
+//             // Add the first value of the pair
+//             converted_pair->push_back(static_cast<int>(first_value));
+
+//             // Add all other values in the second of the pair
+//             for (const auto& value : second_vector) {
+//                 converted_pair->push_back(static_cast<int>(value));
+//             }
+
+//             // Add the converted pair to the converted_vector
+//             converted_vector->push_back(converted_pair);
+//         }
+
+//         // Add the converted_vector to converted_codes
+//         (*(*converted_codes)[outer_key])[inner_key] = converted_vector;
+//     }
+// }
+
+            map<int, map<std::string, torch::Tensor>*>* query_doc_emb_approx_map = decoder_->decode(converted_codes);
+            cout << "Decoded\n";
+
+// Deallocate memory for converted_codes
+for (auto& outer_pair : *converted_codes) {
+    for (auto& inner_pair : *outer_pair.second) {
+        for (auto& vector_ptr : *inner_pair.second) {
+            delete vector_ptr; // Deallocate each inner vector
+        }
+        delete inner_pair.second; // Deallocate the vector of inner vectors
+    }
+    delete outer_pair.second; // Deallocate the map of inner maps
+}
+delete converted_codes; // Deallocate the outer map
+
 
             #ifdef PRFILE_CQ
                 auto end_decoding = std::chrono::system_clock::now();
@@ -198,13 +311,13 @@ namespace lh{
             
             offset += PRE_BATCH_SIZE;
 
-            #ifdef PRFILE_CQ
-                cout << "Average times" << endl;
-                cout << "Fetch time: " << accumulate(fetch_times.begin(), fetch_times.end(), 0) / fetch_times.size() << endl;
-                cout << "Decoding time: " << accumulate(decoding_times.begin(), decoding_times.end(), 0) / decoding_times.size() << endl;
-                cout << "Encoding time: " << accumulate(encoding_times.begin(), encoding_times.end(), 0) / encoding_times.size() << endl;
-                cout << "Scoring time: " << accumulate(scoring_times.begin(), scoring_times.end(), 0) / scoring_times.size() << endl;
-            #endif
+            // #ifdef PRFILE_CQ
+            //     cout << "Average times" << endl;
+            //     cout << "Fetch time: " << accumulate(fetch_times.begin(), fetch_times.end(), 0) / fetch_times.size() << endl;
+            //     cout << "Decoding time: " << accumulate(decoding_times.begin(), decoding_times.end(), 0) / decoding_times.size() << endl;
+            //     cout << "Encoding time: " << accumulate(encoding_times.begin(), encoding_times.end(), 0) / encoding_times.size() << endl;
+            //     cout << "Scoring time: " << accumulate(scoring_times.begin(), scoring_times.end(), 0) / scoring_times.size() << endl;
+            // #endif
         }
 
         #ifdef PRFILE_CQ
