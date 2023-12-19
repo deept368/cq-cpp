@@ -2,6 +2,17 @@
 #define CODEFETCHER_H
 
 
+#include "../utils.h"
+#include <string>
+#include "codefetcher.h"
+#include <arpa/inet.h>
+#include <boost/uuid/detail/md5.hpp>
+#include <boost/algorithm/hex.hpp>
+#include <bitset>
+#include <sstream>
+#include <boost/filesystem.hpp>
+#include "../config.h"
+#include<future>
 #include <iostream>
 #include <fstream>
 #include <sstream>

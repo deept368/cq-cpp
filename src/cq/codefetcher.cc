@@ -1,19 +1,4 @@
 #include "codefetcher.h"
-#include "../utils.h"
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <unordered_map>
-#include <string>
-#include <cstdint>
-#include "codefetcher.h"
-#include <arpa/inet.h>
-#include <boost/uuid/detail/md5.hpp>
-#include <boost/algorithm/hex.hpp>
-#include <bitset>
-#include <sstream>
-#include <boost/filesystem.hpp>
-#include "../config.h"
 
 using namespace std;
 
@@ -64,12 +49,9 @@ namespace lh{
                     infile.seekg((*key_offset_store)[to_string(i)] / 8, ios::beg);
 
                     for (int j = 0; j < num_docs; j++) {
-                        // cout << "Document id code fetch: " << j << std::endl;
                         string doc_id = to_string(256*(j) + i);
                         int token_id = -1;
                         vector<pair<uint16_t, vector<uint8_t>*>>* doc_data = new vector<pair<uint16_t, vector<uint8_t>*>>();
-                        // cout << "REACHED Document id " << (*key_offset_store)[doc_id] << std::endl;
-                        // infile.seekg((*key_offset_store)[doc_id] / 8, ios::beg);
                         
                         while (token_id != 102){
                             char buffer[18];
@@ -121,24 +103,18 @@ namespace lh{
                 int bit_offset = key_offset_store->at(doc_id);
                 ifstream &file = *(*file_ptrs)[file_idx];
                 file.seekg(bit_offset / 8, ios::beg);
-                int token_id = -1;
+                uint16_t token_id = 0;
+                
+                while (token_id != 102){
+                    char buffer[18];
+                    file.read(buffer, 18);
 
-                char buffer[3600];
-                file.read(buffer, 3600);
-                const int bytesNeeded = 2 + CODEBOOK_COUNT;
-                char tempBuffer[bytesNeeded];
-                int curr_index = 0;
-                while ((curr_index < 3600 - bytesNeeded + 1) && (token_id != 102)){
-                    for (int i = 0; i < bytesNeeded; ++i) {
-                        tempBuffer[i] = buffer[curr_index + i];
-                    }
-                    token_id = ntohs(*(reinterpret_cast<uint16_t*>(tempBuffer)));
+                    token_id = ntohs(*(reinterpret_cast<int* >(buffer)));
                     pair<uint16_t, vector<uint8_t>*> token_data = make_pair(token_id, new vector<uint8_t>());
                     for (int i = 2; i < 18; i++){
                         token_data.second->push_back((unsigned char)buffer[i]);
                     }
                     doc_data->push_back(token_data);
-                    curr_index += bytesNeeded;
                 }
             }
             
