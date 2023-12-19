@@ -10,17 +10,11 @@
 #define DIMENSION_SIZE 128
 #define VOCAB_SIZE 30522
 #define PAD_TOKEN_ID 0
-#define CODEBOOK_COUNT 16 
-#define CODES_COUNT 256
 #define TORCH_DTYPE torch::kFloat32
 #define SIMILARITY_METRIC "cosine"
 #define CODEBOOK_DIM 8
-
-// #define QUERY_FILE "../data/queries.dev.tsv"
-// #define RESULTS_FILE "../data/retrieval-results-test.tsv"
-
-// #define QUERY_FILE "../data/msmarco-test2019-queries-qrel.tsv"
-// #define RESULTS_FILE "../data/retrieval-results.tsv"
+#define CODEBOOK_COUNT 16 
+#define CODES_COUNT 256
 
 #define QUERY_FILE "../data/queries.dev.tsv"
 #define RESULTS_FILE "../data/index-sqhd-54-refcorrect-top1000.trec"
@@ -31,11 +25,8 @@
 #define STORE_SIZE 256
 
 
-#define PRE_BATCH_SIZE 1
+#define PRE_BATCH_SIZE 100
 #define TOTAL_QUERIES 6980
-
-// #define PRE_BATCH_SIZE 1
-// #define TOTAL_QUERIES 1
 
 #define USE_BECR false
 #define WINDOW_SIZE 3

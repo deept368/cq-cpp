@@ -13,7 +13,7 @@ namespace lh{
         public:
             explicit Decoder();
             ~Decoder();
-            map<int, map<std::string,torch::Tensor>*>* decode(unordered_map<int, unordered_map<string, vector<vector<uint16_t>*>*>*>* fetched_codes);
+            map<int, map<std::string,torch::Tensor>*>* decode(unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* fetched_codes);
             
         private:
             std::int64_t vocab_size_;
@@ -29,6 +29,5 @@ namespace lh{
             torch::nn::EmbeddingImpl* non_contextual_embedding;
             torch::Tensor* codebook;
             torch::nn::LinearImpl* composition_layer;
-           
     };
 }

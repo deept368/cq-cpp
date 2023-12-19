@@ -22,9 +22,8 @@ namespace lh{
     public:
         QueryProcessor();
         ~QueryProcessor();
-        unordered_map<int, unordered_map<string, vector<vector<uint16_t>*>*>*>* getCodes(int offset);
+        unordered_map<int, unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>*>* getCodes(int offset);
         const unordered_map<int, unordered_map<string, float>>& getOriginalScores();
-       
     };
 }
 
