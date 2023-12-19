@@ -1,7 +1,6 @@
 #ifndef CODEFETCHER_H
 #define CODEFETCHER_H
 
-
 #include "../utils.h"
 #include <string>
 #include "codefetcher.h"
@@ -12,7 +11,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include "../config.h"
-#include<future>
+#include <future>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -23,23 +22,24 @@
 
 using namespace std;
 
-namespace lh{
+namespace lh
+{
 
     class CodeFetcher
     {
-        private:
-            string base_filename;
-            int number_of_files;
-            vector<ifstream *>* file_ptrs;
-            unordered_map<string, int>* key_offset_store;
-            unordered_map<string, vector< pair<uint16_t, vector<uint8_t>*> >*>* codes_store;
-            int total_docs;
-    
-        public:
-            // Constructor
-            CodeFetcher();
-            ~CodeFetcher();
-            unordered_map<string, vector<pair<uint16_t, vector<uint8_t>*>>*>* get_codes(vector<string>* document_ids);
+    private:
+        string base_filename;
+        int number_of_files;
+        vector<ifstream *> *file_ptrs;
+        unordered_map<string, int> *key_offset_store;
+        unordered_map<string, vector<pair<uint16_t, vector<uint8_t> *>> *> *codes_store;
+        int total_docs;
+
+    public:
+        // Constructor
+        CodeFetcher();
+        ~CodeFetcher();
+        unordered_map<string, vector<pair<uint16_t, vector<uint8_t> *>> *> *get_codes(vector<string> *document_ids);
     };
 }
 
